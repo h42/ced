@@ -7,6 +7,7 @@ typedef unsigned char uchar;
 
 class ced;
 
+/*
 class under {
 public:
     under() {zused=0; zbuf=0;}
@@ -40,6 +41,7 @@ private:
     under zunder[MAXUNDO];
     int zp1,zcnt;
 };
+*/
 
 class ced {
     friend class undo;
@@ -64,6 +66,7 @@ public:
     void enter();
     void gline(int up=0);
     void gline2(int x);
+    int  hist_put();
     void home();
     void ins_char(int c);
     void ins_line(int disp=1);
@@ -79,17 +82,18 @@ public:
     void right();
     void tab();
     void top();
-    void undoer();
+    //void undoer();
     void up();
     void upoff();
 
     // FILE
+    int  newfile();
     int  loadfile(const char *fn=0);
     int  readf(const char *fn);
     int  savefile();
 
 private:
-    undo    zu;
+    //undo    zu;
     term    dsp;
     list    ll;
     //file    zfile;

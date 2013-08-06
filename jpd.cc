@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
 #include <unistd.h>
 #include <malloc.h>
 #include <string.h>
@@ -18,6 +20,7 @@ typedef unsigned char uchar;
 
 class ced;
 
+/*
 class under {
 public:
     under() {zused=0; zbuf=0;}
@@ -51,6 +54,7 @@ private:
     under zunder[MAXUNDO];
     int zp1,zcnt;
 };
+*/
 
 class ced {
     friend class undo;
@@ -75,6 +79,7 @@ public:
     void enter();
     void gline(int up=0);
     void gline2(int x);
+    int  hist_put();
     void home();
     void ins_char(int c);
     void ins_line(int disp=1);
@@ -90,17 +95,18 @@ public:
     void right();
     void tab();
     void top();
-    void undoer();
+    //void undoer();
     void up();
     void upoff();
 
     // FILE
+    int  newfile();
     int  loadfile(const char *fn=0);
     int  readf(const char *fn);
     int  savefile();
 
 private:
-    undo    zu;
+    //undo    zu;
     term    dsp;
     list    ll;
     //file    zfile;
@@ -125,7 +131,8 @@ private:
 #endif
 //ccinclude
 
-ced::ced() : zu(this) {
+//ced::ced() : zu(this) {
+ced::ced() {
     zbufsize=zfbufsize=4064;
     zbuf=(char *)malloc(zbufsize);
     zbuf2=(char *)malloc(zbufsize);
@@ -213,8 +220,10 @@ void ced::main() {
     zmaxx=dsp.cols();
     zmaxy=dsp.rows();
 
-    readf("temp");
-    disppage(0);
+    //readf("temp");
+    //disppage(0);
+    newfile();
+
 
     while (1) {
 	dispstat();
@@ -227,12 +236,13 @@ void ced::main() {
 	    else if (c==2) bottom();
 	    else if (c==4) del_line();
 	    else if (c==5) del_eol();
+            //else if (c==7) hist_put();
 	    else if (c==8) bs_char();
 	    else if (c==13) enter();
 	    else if (c==20) top();
 	    else if (c==14) ins_line(1);
 	    else if (c==9) tab();
-	    else if (c==21) undoer();
+            //else if (c==21) undoer();
 	}
 
 	else if (c<256) {
@@ -262,8 +272,13 @@ void ced::main() {
     }
 }
 
+const char* gethome2() {
+    const char *h = getenv("HOME");
+    return h ? h : "";
+}
+
 int main() {
     ced e1;
     e1.main();
     return 0;
-}
+ }

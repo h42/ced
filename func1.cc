@@ -239,11 +239,13 @@ void ced::top() {
     disppage(zy);
 }
 
+/*
 void ced::undoer() {
     //zu.trace();
     zu.pop();
     disppage(ztop);
 }
+*/
 
 void ced::up() {
     pline(); zcur=-1;

@@ -27,6 +27,16 @@ char * jlib_readlink(char *fn,char *fn2,int size) {
 }
 
 //
+// NEWFILE
+//
+int ced::newfile() {
+    ll.init();
+    ll.ins(0,"",0);
+    zx=zy=ztop=zoff=0;
+    return 0;
+}
+
+//
 // SAVEFILE
 //
 int ced::savefile() {
