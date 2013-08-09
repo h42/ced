@@ -59,6 +59,7 @@ private:
 class ced {
     friend class undo;
     friend class under;
+    friend class history;
 public:
     ced();
     ~ced();
@@ -224,7 +225,6 @@ void ced::main() {
     //disppage(0);
     newfile();
 
-
     while (1) {
 	dispstat();
 	zmsg[0]=0;
@@ -278,6 +278,9 @@ const char* gethome2() {
 }
 
 int main() {
+    void testhist();
+    testhist();
+    return 0;
     ced e1;
     e1.main();
     return 0;

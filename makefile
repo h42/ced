@@ -28,6 +28,10 @@ file.o file.h:file.cc
 	g++ -c $(CPPFLAGS) file.cc
 	awkinc <file.cc >file.h
 
+history.o history.h:history.cc
+	g++ -c $(CPPFLAGS) history.cc
+	awkinc <history.cc >history.h
+
 term.o term.h:term.cc
 	g++ -c $(CPPFLAGS) term.cc
 	awkinc <term.cc >term.h

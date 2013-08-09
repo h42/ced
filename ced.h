@@ -46,6 +46,7 @@ private:
 class ced {
     friend class undo;
     friend class under;
+    friend class history;
 public:
     ced();
     ~ced();
