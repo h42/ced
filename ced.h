@@ -5,6 +5,9 @@
 
 typedef unsigned char uchar;
 
+
+#include "history.h"
+
 class ced;
 
 /*
@@ -46,7 +49,6 @@ private:
 class ced {
     friend class undo;
     friend class under;
-    friend class history;
 public:
     ced();
     ~ced();
@@ -72,7 +74,7 @@ public:
     void ins_char(int c);
     void ins_line(int disp=1);
     void left();
-    void main();
+    void main(int,char **);
     int  max(int x,int y) {return x>y ? x : y;}
     int  min(int x,int y) {return x<y ? x : y;}
     void newf();
@@ -114,6 +116,7 @@ private:
     char    zmsg[80];
     char    zfn[256];
     int     zr0,zoverride;
+    history zhist;
 };
 
 #endif

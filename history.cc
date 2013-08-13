@@ -6,16 +6,12 @@
 #include <limits.h>
 #include <string.h>
 
-#include "term.h"
-#include "list.h"
-#include "ced.h"
-
 //ccinclude
 const int N = 10, PM=256;
 
 struct hist {
     char hfn[PM];
-    int  hx,hy,hoff;
+    int  hx,hy,hoff,htop;
 } ;
 
 class history {
@@ -24,7 +20,9 @@ public:
     int  del(const char *);
     void display();
     void init();
-    int  push(hist &h);
+    hist * pop(int n=0);
+    hist * pop(char *fn);
+    int  push(const char *fn,int x,int y,int off, int top);
     void read();
     void write();
 private:
@@ -116,12 +114,26 @@ int history::del(const char *fn) {
     return 0;
 }
 
-int history::push(hist &h) {
+hist * history::pop(int n) {
+    if (n<0 || n>=N) n=0;
+    return &zh[n];
+}
+
+hist * history::pop(char *fn) {
+    for (int i=0;i<N;i++) {
+        if (strcmp(fn,zh[i].hfn)==0) return &zh[i];
+    }
+    return 0;
+}
+
+int history:: push(const char *fn,int x,int y,int off, int top) {
+    hist h;
+    strncpy(h.hfn,fn,PM);
+    h.hx=x;
+    h.hy=y;
+    h.hoff=off;
+    h.htop=top;
     if (h.hfn[0]==0) return -1;
-    //char path[PATH_MAX];
-    //char *p=realpath(h.hfn,path);
-    //if (!p) return -1;
-    //strcpy(h.hfn,path);
     del(h.hfn);
     for (int i=N-1;i>0;i--) zh[i]=zh[i-1];
     zh[0]=h;
@@ -143,21 +155,22 @@ void history::display() {
 
 void testhist() {
     int i;
-    hist h1;
+    char sx[256];
     history h;
     for (i=0;i<N;i++) {
-        sprintf(h1.hfn,"temp%d",i+1);
-        h.push(h1);
+        sprintf(sx,"temp%d",i+1);
+        h.push(sx,0,0,0,0);
     }
     i=5;
-    sprintf(h1.hfn,"temp%d",i+1);
-    h.push(h1);
+    sprintf(sx,"temp%d",i+1);
+    h.push(sx,0,0,0,0);
 
     h.write();
     h.init();
     h.display();
 
     h.read();
+    hist *hx = h.pop(3);
+    printf("%s\n",hx->hfn);
     h.display();
-    printf("%d %ld %ld\n",PM,sizeof(h1),sizeof(h));
 }

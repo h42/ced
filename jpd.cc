@@ -18,6 +18,9 @@ using namespace std;
 
 typedef unsigned char uchar;
 
+
+#include "history.h"
+
 class ced;
 
 /*
@@ -59,7 +62,6 @@ private:
 class ced {
     friend class undo;
     friend class under;
-    friend class history;
 public:
     ced();
     ~ced();
@@ -85,7 +87,7 @@ public:
     void ins_char(int c);
     void ins_line(int disp=1);
     void left();
-    void main();
+    void main(int,char **);
     int  max(int x,int y) {return x>y ? x : y;}
     int  min(int x,int y) {return x<y ? x : y;}
     void newf();
@@ -127,6 +129,7 @@ private:
     char    zmsg[80];
     char    zfn[256];
     int     zr0,zoverride;
+    history zhist;
 };
 
 #endif
@@ -213,17 +216,31 @@ void ced::newf() {
     disppage(0);
 }
 
-void ced::main() {
+void ced::main(int argc, char **argv) {
     int c=0;
-    //tfile();
-    //return;
+    hist *h;
+    char *fn=0;
 
+    newfile();
+    zhist.read();
     zmaxx=dsp.cols();
     zmaxy=dsp.rows();
 
-    //readf("temp");
-    //disppage(0);
-    newfile();
+    if (argc && argv[1] && argv[1][0]) fn=argv[1];
+    else {
+        h = zhist.pop();
+        if (h->hfn[0]) fn=h->hfn;
+    }
+    if (fn) {
+        loadfile(fn);
+        h=zhist.pop(fn);
+        if (h) {
+            zx=h->hx;
+            zy=h->hy;
+            zoff=h->hoff;
+            ztop=h->htop;
+        }
+    }
 
     while (1) {
 	dispstat();
@@ -270,6 +287,10 @@ void ced::main() {
 
 	//else printf("%d\n",c);
     }
+    if (zfn[0]) {
+        zhist.push(zfn,zx,zy,zoff,ztop);
+        zhist.write();
+    }
 }
 
 const char* gethome2() {
@@ -277,11 +298,8 @@ const char* gethome2() {
     return h ? h : "";
 }
 
-int main() {
-    void testhist();
-    testhist();
-    return 0;
+int main(int argc, char **argv) {
     ced e1;
-    e1.main();
+    e1.main(argc,argv);
     return 0;
- }
+}
