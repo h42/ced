@@ -30,9 +30,22 @@ char * jlib_readlink(char *fn,char *fn2,int size) {
 // NEWFILE
 //
 int ced::newfile() {
+    if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
     ll.init();
     ll.ins(0,"",0);
     zx=zy=ztop=zoff=0;
+    return 0;
+}
+
+//
+// SWAPFILE
+//
+int ced::swapfile(int x) {
+    if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
+    hist *h = zhist.pop(1);
+    if (h->hfn[0]) {
+        loadfile(h->hfn);
+    }
     return 0;
 }
 
@@ -78,6 +91,7 @@ int ced::loadfile(const char *fn) {
     int rc;
     char fn2[256];
     pline();
+    if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
     //if (zedit) checksave();
 
     if (!fn || !fn[0]) dsp.request("Enter filename: ",fn2,sizeof(fn2));
@@ -86,6 +100,13 @@ int ced::loadfile(const char *fn) {
     rc=readf(fn2);
     if (rc) strcpy(zmsg,"Open failed");
     else {
+        hist *h=zhist.pop(fn2);
+        if (h) {
+            zx=h->hx;
+            zy=h->hy;
+            zoff=h->hoff;
+            ztop=h->htop;
+        }
 	disppage(ztop);
 	sprintf(zmsg,"%s loaded",fn2);
     }

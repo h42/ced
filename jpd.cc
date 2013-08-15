@@ -107,6 +107,7 @@ public:
     int  loadfile(const char *fn=0);
     int  readf(const char *fn);
     int  savefile();
+    int  swapfile(int x=0);
 
 private:
     //undo    zu;
@@ -270,19 +271,20 @@ void ced::main(int argc, char **argv) {
 
 	else if (c >= F1) {
 	    if (c == F12) break;
-	    else if (c==F10) loadfile();
-	    else if (c==F11) savefile();
+            else if (c==F10)  loadfile();
+            else if (c==F11)  savefile();
+            else if (c==F9)   swapfile();
 	    else if (c==BTAB) btab();
-	    else if (c==DEL) del_char();
+            else if (c==DEL)  del_char();
 	    else if (c==DOWN) down();
-	    else if (c==END) end();
+            else if (c==END)  end();
 	    else if (c==HOME) home();
-	    else if (c==INS) zins=zins==0 ? 1 : 0;
-	    else if (c==LEFT) left();
+            else if (c==INS)  zins=zins==0 ? 1 : 0;
+            else if (c==LEFT) left();
 	    else if (c==PGDOWN) pgdown();
-	    else if (c==PGUP) pgup();
+            else if (c==PGUP)  pgup();
 	    else if (c==RIGHT) right();
-	    else if (c==UP) up();
+            else if (c==UP)    up();
 	}
 
 	//else printf("%d\n",c);

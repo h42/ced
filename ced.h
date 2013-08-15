@@ -94,6 +94,7 @@ public:
     int  loadfile(const char *fn=0);
     int  readf(const char *fn);
     int  savefile();
+    int  swapfile(int x=0);
 
 private:
     //undo    zu;
