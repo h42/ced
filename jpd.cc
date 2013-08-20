@@ -102,6 +102,14 @@ public:
     void up();
     void upoff();
 
+    void ctrl_k();
+    int  check_k();
+    void ctrl_kb();
+    void ctrl_kk();
+    void ctrl_kl();
+    void disp_k();
+    bool in_k(int x=-1, int y=-1);
+
     // FILE
     int  newfile();
     int  loadfile(const char *fn=0);
@@ -131,6 +139,8 @@ private:
     char    zfn[256];
     int     zr0,zoverride;
     history zhist;
+
+    int zkx1,zkx2,zky1,zky2,zkh;
 };
 
 #endif
@@ -149,6 +159,7 @@ ced::ced() {
     zcur=-1;
     zmsg[0]=0;
     ztabsize=8;
+    zkh=0; zkx1 = zkx2 = zky1 = zky2 = -1;
     zfn[0]=zr0=zoverride=0;
     dsp.setmode(1);
     dsp.fg7();
@@ -256,6 +267,7 @@ void ced::main(int argc, char **argv) {
 	    else if (c==5) del_eol();
             //else if (c==7) hist_put();
 	    else if (c==8) bs_char();
+            else if (c==11) ctrl_k();
 	    else if (c==13) enter();
 	    else if (c==20) top();
 	    else if (c==14) ins_line(1);

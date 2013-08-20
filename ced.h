@@ -89,6 +89,14 @@ public:
     void up();
     void upoff();
 
+    void ctrl_k();
+    int  check_k();
+    void ctrl_kb();
+    void ctrl_kk();
+    void ctrl_kl();
+    void disp_k();
+    bool in_k(int x=-1, int y=-1);
+
     // FILE
     int  newfile();
     int  loadfile(const char *fn=0);
@@ -118,6 +126,8 @@ private:
     char    zfn[256];
     int     zr0,zoverride;
     history zhist;
+
+    int zkx1,zkx2,zky1,zky2,zkh;
 };
 
 #endif
