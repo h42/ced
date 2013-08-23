@@ -27,13 +27,30 @@ char * jlib_readlink(char *fn,char *fn2,int size) {
 }
 
 //
+// CHECKSAVE
+//
+void ced::checksave() {
+    char sx[80];
+    if (!zedit) return;
+    while (1) {
+        dsp.request("Do you want to save current file (y/n)? ", sx, sizeof(sx));
+        if (sx[0]=='y' || sx[0]=='Y') {
+            savefile();
+            return;
+        }
+        else if (sx[0]=='n' || sx[0]=='N') return;
+    }
+}
+
+//
 // NEWFILE
 //
 int ced::newfile() {
+    checksave();
     if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
     ll.init();
     ll.ins(0,"",0);
-    zx=zy=ztop=zoff=0;
+    zx=zy=ztop=zoff=zedit=zedit2=0;
     return 0;
 }
 
@@ -81,6 +98,7 @@ int ced::savefile() {
     }
     close(fd);
     jcpy(zmsg,"File saved");
+    zedit=0;
     return 0;
 }
 
@@ -92,7 +110,7 @@ int ced::loadfile(const char *fn) {
     char fn2[256];
     pline();
     if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
-    //if (zedit) checksave();
+    checksave();
 
     if (!fn || !fn[0]) dsp.request("Enter filename: ",fn2,sizeof(fn2));
     else strcpy(fn2,fn);
@@ -106,7 +124,9 @@ int ced::loadfile(const char *fn) {
             zy=h->hy;
             zoff=h->hoff;
             ztop=h->htop;
+            zedit=zedit2=0;
         }
+        else  zx=zy=ztop=zoff=zedit=zedit2=0;
 	disppage(ztop);
 	sprintf(zmsg,"%s loaded",fn2);
     }

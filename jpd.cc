@@ -105,14 +105,16 @@ public:
     void ctrl_k();
     int  check_k();
     void ctrl_kb();
+    void ctrl_kc();
     void ctrl_kk();
     void ctrl_kl();
     void disp_k();
     bool in_k(int x=-1, int y=-1);
 
     // FILE
-    int  newfile();
+    void checksave();
     int  loadfile(const char *fn=0);
+    int  newfile();
     int  readf(const char *fn);
     int  savefile();
     int  swapfile(int x=0);
@@ -301,6 +303,7 @@ void ced::main(int argc, char **argv) {
 
 	//else printf("%d\n",c);
     }
+    checksave();
     if (zfn[0]) {
         zhist.push(zfn,zx,zy,zoff,ztop);
         zhist.write();
