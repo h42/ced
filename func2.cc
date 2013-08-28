@@ -66,14 +66,19 @@ void ced::ctrl_kd() {
         disppage(ztop);
         return;
     }
-
+    int l=zky2-zky1+1;
+    for (int i=0;i<l;i++) ll.del(zky1);
+    zkh=0;
+    if (zy>zky1 && zy<=zky2) zy=zky1;
+    if (zy>zky2) zy-=l;
+    disppage(ztop);
 }
 
 void ced::ctrl_kv() {
     int l;
     pline();
-    if (zkh<1 || (zkh && in_k()) ) {
-        snprintf(zmsg,sizeof(zmsg),"nothing copied");
+    if (zkh<1 || (in_k() || zy==zky1-1) ) {
+        snprintf(zmsg,sizeof(zmsg),"nothing moved");
         return;
     }
     if (zkh==1) {
@@ -104,7 +109,14 @@ void ced::ctrl_kv() {
         buf=ll2.get(i);
         ll.ins(i+zy+1,buf);
     }
-    zky1=zy+1;zky2=zky1+l-1;
+    if (zy<zky1) {
+        for (i=0;i<l;i++) ll.del(zky1 + l);
+        zky1=zy+1; zky2=zky1+l-1;
+    }
+    else {
+        for (i=0;i<l;i++) ll.del(zky1);
+        zky1=zy+1-l; zky2=zky1+l-1;
+    }
     disppage(ztop);
 }
 
