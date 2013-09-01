@@ -90,14 +90,16 @@ public:
     void upoff();
 
     void ctrl_k();
-    int  check_k();
     void ctrl_kb();
     void ctrl_kc();
     void ctrl_kd();
     void ctrl_kk();
     void ctrl_kl();
     void ctrl_kv();
+    int  check_k();
+    void del_k();
     void disp_k();
+    void init_k();
     bool in_k(int x=-1, int y=-1);
 
     // FILE

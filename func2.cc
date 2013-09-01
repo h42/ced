@@ -12,6 +12,7 @@ void ced::ctrl_k() {
     if (c==2  || c=='b' || c=='B') ctrl_kb();
     else if (c==3   || c=='c' || c=='C') ctrl_kc();
     else if (c==4   || c=='d' || c=='D') ctrl_kd();
+    else if (c==8   || c=='h' || c=='H') {if (zkh) zkh=0; else zkh=check_k();}
     else if (c==11  || c=='k' || c=='K') ctrl_kk();
     else if (c==12  || c=='l' || c=='L') ctrl_kl();
     else if (c==20  || c=='t' || c=='T')
@@ -25,6 +26,24 @@ int ced::check_k() {
     if (zky1==zky2 && zkx1==0 && zkx2==HIGH) return 3;
     if (zky1==zky2 && zkx1<zkx2) return 1;
     return 0;
+}
+
+void ced::del_k() {
+    int k=check_k();
+    if (k==0 || (k!=2 && zy==zky1)) return init_k();
+    if (zky1>zy) {
+        --zky1;
+        --zky2;
+        return;
+    }
+    if (zy>=zky1 && zy<=zky2) {
+        zky2--;
+        if (zky1==zky2) {
+            zkh=3;
+            zkx1=0;
+            zkx2=HIGH;
+        }
+    }
 }
 
 bool ced::in_k(int x, int y) {
@@ -197,3 +216,7 @@ void ced::disp_k() {
         zkh,zkx1,zky1,zkx2,zky2);
 }
 
+void ced::init_k() {
+    zkh=0;
+    zkx1=zkx2=zky1=zky2=-1;
+}

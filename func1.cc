@@ -97,6 +97,7 @@ void ced::del_eol() {
 
 void ced::del_line() {
     if (ll.size()==1) {
+        init_k();
 	zy=0;
 	zedit=zedit2=1;
 	zx=zoff=0;
@@ -106,6 +107,7 @@ void ced::del_line() {
 	return;
     }
     pline();
+    del_k();
     zedit=1; zcur=-1;
     ll.del(zy);
     if (zy>=ll.size()) {
