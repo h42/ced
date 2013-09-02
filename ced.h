@@ -97,10 +97,12 @@ public:
     void ctrl_kl();
     void ctrl_kv();
     int  check_k();
-    void del_k();
     void disp_k();
     void init_k();
     bool in_k(int x=-1, int y=-1);
+    void k_del();
+    void k_del_char();
+    void k_ins_char();
 
     // FILE
     void checksave();

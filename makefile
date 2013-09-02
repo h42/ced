@@ -47,5 +47,8 @@ list.o:list.cc
 
 list_t:list_t.cc list.o
 
+install:jpd
+	install jpd /usr/local/bin/ced
+
 clean:
 	-rm *.o $(PROGS)

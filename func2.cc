@@ -28,7 +28,7 @@ int ced::check_k() {
     return 0;
 }
 
-void ced::del_k() {
+void ced::k_del() {
     int k=check_k();
     if (k==0 || (k!=2 && zy==zky1)) return init_k();
     if (zky1>zy) {
@@ -44,6 +44,36 @@ void ced::del_k() {
             zkx2=HIGH;
         }
     }
+}
+
+void ced::k_del_char() {
+    if (zx<zbufl) {
+        if (zkh==1 && zy==zky1) {
+            if (zx<zkx1) {
+                zkx1--;
+                zkx2--;
+            }
+            else if (zx<=zkx2) zkx2--;
+        }
+        return;
+    }
+    if (zkh==1 && zy==zky1-1) {
+        zky1=zky2=zy;
+        zkx1+=zx;
+        zkx2+=zx;
+        return;
+    }
+    if (zkh<2) return;
+    if (zy<zky1) {
+        zky1--;
+        zky2--;
+    }
+    else if (zy<zky2) zky2--;
+}
+
+void ced::k_ins_char() {
+    if (zkh!=1 || zky1 != zy) return;
+    if (zx>=zkx1 && zx<=zkx2) zkx2++;
 }
 
 bool ced::in_k(int x, int y) {

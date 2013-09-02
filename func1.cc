@@ -72,6 +72,7 @@ void ced::ctrl_a() {
 
 void ced::del_char() {
     gline(1);
+    k_del_char();
     if (zx<zbufl) {
 	if (zbufl<=0) return;
 	for (int i=zx; i<zbufl-1; i++) zbuf[i]=zbuf[i+1];
@@ -107,7 +108,7 @@ void ced::del_line() {
 	return;
     }
     pline();
-    del_k();
+    k_del();
     zedit=1; zcur=-1;
     ll.del(zy);
     if (zy>=ll.size()) {
@@ -170,6 +171,7 @@ void ced::home() {
 
 void ced::ins_char(int c) {
     gline(1);
+    k_ins_char();
     if (zx<=zbufl) {
 	for (int i=zbufl;i>zx;i--) zbuf[i]=zbuf[i-1];
 	zbuf[zx++]=c;
