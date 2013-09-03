@@ -12,11 +12,11 @@ void ced::ctrl_k() {
     if (c==2  || c=='b' || c=='B') ctrl_kb();
     else if (c==3   || c=='c' || c=='C') ctrl_kc();
     else if (c==4   || c=='d' || c=='D') ctrl_kd();
-    else if (c==8   || c=='h' || c=='H') {if (zkh) zkh=0; else zkh=check_k();}
+    else if (c==8   || c=='h' || c=='H') {init_k();}
     else if (c==11  || c=='k' || c=='K') ctrl_kk();
     else if (c==12  || c=='l' || c=='L') ctrl_kl();
     else if (c==20  || c=='t' || c=='T')
-        snprintf(zmsg,sizeof(zmsg),"in_k=%d",in_k());
+        snprintf(zmsg,sizeof(zmsg),"in_k=%d x1=%d x2=%d",in_k(),zkx1,zkx2);
     else if (c==22   || c=='v' || c=='V') ctrl_kv();
 }
 
@@ -28,25 +28,9 @@ int ced::check_k() {
     return 0;
 }
 
-void ced::k_del() {
-    int k=check_k();
-    if (k==0 || (k!=2 && zy==zky1)) return init_k();
-    if (zky1>zy) {
-        --zky1;
-        --zky2;
-        return;
-    }
-    if (zy>=zky1 && zy<=zky2) {
-        zky2--;
-        if (zky1==zky2) {
-            zkh=3;
-            zkx1=0;
-            zkx2=HIGH;
-        }
-    }
-}
-
 void ced::k_del_char() {
+    if (zkh==0) return;
+    if (zy==zky1 && zky1==zky2 && zx==zkx1 && zkx1==zkx2) return init_k();
     if (zx<zbufl) {
         if (zkh==1 && zy==zky1) {
             if (zx<zkx1) {
@@ -63,7 +47,6 @@ void ced::k_del_char() {
         zkx2+=zx;
         return;
     }
-    if (zkh<2) return;
     if (zy<zky1) {
         zky1--;
         zky2--;
@@ -71,9 +54,53 @@ void ced::k_del_char() {
     else if (zy<zky2) zky2--;
 }
 
+void ced::k_del_eol() {
+    if (zkh==0) return;
+    if (zkh==1 && zy==zky1) {
+        if (zx<=zkx1) init_k();
+        else if (zx<zkx2) zkx2=zx-1;
+    }
+}
+
+void ced::k_del_line() {
+    if (zkh==0) return;
+    if (zy==zky1 && zky1==zky2) return init_k();
+    if (zky1>zy) {
+        --zky1;
+        --zky2;
+        return;
+    }
+    if (zy>=zky1 && zy<=zky2) {
+        zky2--;
+        if (zky1==zky2) {
+            zkh=3;
+            zkx1=0;
+            zkx2=HIGH;
+        }
+    }
+}
+
+void ced::k_enter() {
+    if (zkh==1 && zy==zky1 && zkx2>=zx) init_k();
+}
+
 void ced::k_ins_char() {
+    if (zkh==0) return;
     if (zkh!=1 || zky1 != zy) return;
     if (zx>=zkx1 && zx<=zkx2) zkx2++;
+}
+
+void ced::k_ins_line() {
+    if (zkh==0) return;
+    if (zy<zky1) {
+        zky1++;
+        zky2++;
+        return;
+    }
+    else if (zkh>1 && zy<zky2) {
+        zky2++;
+        return;
+    }
 }
 
 bool ced::in_k(int x, int y) {

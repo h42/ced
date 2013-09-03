@@ -113,9 +113,12 @@ public:
     void disp_k();
     void init_k();
     bool in_k(int x=-1, int y=-1);
-    void k_del();
+    void k_del_line();
+    void k_del_eol();
     void k_del_char();
+    void k_enter();
     void k_ins_char();
+    void k_ins_line();
 
     // FILE
     void checksave();

@@ -27,7 +27,8 @@ void ced::bottom() {
 }
 
 void ced::bs_char() {
-    gline();
+    gline(1);
+    // K_BS_CHAR not necessary because del_char handles it
     if (zx>zbufl) {
 	left();
 	return;
@@ -91,7 +92,8 @@ void ced::del_char() {
 
 void ced::del_eol() {
     gline(1);
-    memset(&zbuf[zx],' ',zbufl-zx-1);
+    k_del_eol();
+    if (zx<zbufl) memset(&zbuf[zx],' ',zbufl-zx-1);
     zbufl=zx;
     dsp.eol();
 }
@@ -108,7 +110,7 @@ void ced::del_line() {
 	return;
     }
     pline();
-    k_del();
+    k_del_line();
     zedit=1; zcur=-1;
     ll.del(zy);
     if (zy>=ll.size()) {
@@ -148,6 +150,7 @@ void ced::enter() {
     }
     int i,j,ind=0;
     char *tbuf=(char *)alloca(zbufl-zx+2);
+    k_enter(); //if zkx2>=zx  and zkh==1 then init_k
     for (i=zx,j=0;i<zbufl;i++) tbuf[j++]=zbuf[i];
     zbufl=zx;
     pline();
@@ -187,6 +190,7 @@ void ced::ins_char(int c) {
 }
 
 void ced::ins_line(int disp) {
+    k_ins_line();
     pline(); zcur=-1;
     zedit=1;
     zx=0;
