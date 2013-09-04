@@ -2,15 +2,18 @@ CPPFLAGS=-g -Wall -static
 #CC=g++
 
 PROGS=jpd mat term_t
-OBJS=term.o list.o file.o func1.o func2.o display.o history.o
+OBJS=term.o list.o file.o func1.o func2.o display.o history.o re.o
 
-all:history.h file.h term.h ced.h $(PROGS) #getkb.o
+all:history.h file.h term.h ced.h re.h $(PROGS) #getkb.o
 
 ced.h:jpd.cc
 	awkinc <jpd.cc >ced.h
 
 file.h:file.cc
 	awkinc <file.cc >file.h
+
+re.h:re.cc
+	awkinc <re.cc >re.h
 
 term.h:term.cc
 	awkinc <term.cc >term.h
@@ -51,6 +54,8 @@ list.o:list.cc
 	g++ -c $(CPPFLAGS) list.cc
 
 list_t:list_t.cc list.o
+
+re.o:re.cc
 
 install:jpd
 	install jpd /usr/local/bin/ced

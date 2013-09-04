@@ -48,7 +48,7 @@ void ced::checksave() {
 int ced::newfile() {
     checksave();
     if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
-    ll.init();
+    ll.reset();
     ll.ins(0,"",0);
     zx=zy=ztop=zoff=zedit=zedit2=0;
     return 0;
@@ -89,7 +89,7 @@ int ced::savefile() {
 	    zfbufsize *= 2;
 	    zfbuf = (char *)realloc(zfbuf,zfbufsize);
 	    if (l+1 >= zfbufsize) {
-		ll.init();
+                ll.reset(); // THROW AND ERROR
 	    }
 	}
 	memcpy(zfbuf,buf,l);
@@ -145,7 +145,7 @@ int ced::readf(const char *fn) {
 
     //sigstuf(1);
 
-    ll.init();
+    ll.reset();
     p2=0;
     p=0;
     while ((rc=fread(buf2,1,sizeof(buf2),f1)) > 0) {
@@ -173,7 +173,7 @@ int ced::readf(const char *fn) {
 		    zfbufsize *= 2;
 		    zfbuf = (char *)realloc(zfbuf,zfbufsize);
 		    if (p2 >= zfbufsize) {
-			ll.init();
+                        ll.reset(); // THROW AN ERROR
 		    }
 		}
 	    }

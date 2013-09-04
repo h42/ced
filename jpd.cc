@@ -108,6 +108,8 @@ public:
     void ctrl_kd();
     void ctrl_kk();
     void ctrl_kl();
+    void ctrl_kp();
+    void ctrl_ks();
     void ctrl_kv();
     int  check_k();
     void disp_k();
@@ -151,7 +153,8 @@ private:
     int     zr0,zoverride;
     history zhist;
 
-    int zkx1,zkx2,zky1,zky2,zkh;
+    int  zkx1,zkx2,zky1,zky2,zkh;
+    list zcopyll;
 };
 
 #endif
