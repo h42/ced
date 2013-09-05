@@ -11,36 +11,59 @@
 #define NOT 5
 
 //ccinclude
-typedef struct _RE {
-    unsigned char w[256];
-    char *t[256];
-    int len,len2,jump,fast,rlen;
-} RE;
-
-RE *re_open(char *ws,int sensitive);
-void re_close(RE *re);
-int re_wild(RE *re,unsigned char *buf,int len);
+class re {
+public:
+    ~re();
+    re();
+    int open(const char *ws,int sensitive);
+    void close();
+    int wild(unsigned char *buf, int len);
+public:
+    int upd_t(unsigned char *s, int sensitive, int not0);
+    int zopened;
+    unsigned char zw[256];
+    char *zt[256];
+    int zlen,zlen2,zfast,zrlen;
+};
 //ccinclude
 
 /////////////////////////
 // String Search Stuf
 /////////////////////////
 
-void re_close(RE *re) {
-    int j;
-    for (j=0;j<re->len;j++) if (re->t[j]) free(re->t[j]);
-    free(re);
+re::re() {
+    zopened=0;
+    zlen=zlen2=zfast=zrlen=0;
+    for (int i=0;i<256;i++) {
+        zt[i]=0; zw[0]=0;
+    }
 }
 
-static int upd_t(RE *re,char *s,int sensitive,int not) {
+re::~re() {
+    close();
+}
+
+void re::close() {
+    if (!zopened) return;
+    int j;
+    for (j=0;j<zlen;j++) {
+        if (zt[j]) {
+            free(zt[j]);
+            zt[j]=0;
+        }
+    }
+    zopened=0;
+}
+
+int re::upd_t(unsigned char *s, int sensitive, int not0) {
     int i,val;
-    char c,*cp;
-    cp=malloc(256);
+    char c, *cp;
+    cp=(char *)malloc(256);
     if (!cp) {
-        re_close(re);
+        close();
         return -1;
     }
-    if (not) {
+    if (not0) {
         memset(cp,1,256);
         val=0;
     }
@@ -57,19 +80,16 @@ static int upd_t(RE *re,char *s,int sensitive,int not) {
             cp[tolower(c)]=val;
 	}
     }
-    re->t[re->len++]=cp;
-    re->len2++;
+    zt[zlen++]=cp;
+    zlen2++;
     return 0;
 }
 
-RE *re_open(char *ws,int sensitive) {
-    int i,j,rc,state=0,esc=0,not,fast=1,cl=0;
+int re::open(const char *ws,int sensitive) {
+    int i,j,rc,state=0,esc=0,not0,fast=1,cl=0;
     unsigned char c,jump[256],ws2[256];
-    RE *re;
-    re=(RE *)malloc(sizeof(RE));
-    memset(re,0,sizeof(*re));
-    if (!re) return 0;
-    re->len=0;
+    if (zopened) close();
+    zlen=zlen2=zfast=zrlen=0;
     for (i=0;i<256;i++) {
 	c=ws[i];
 	if (esc==1) {
@@ -88,34 +108,34 @@ RE *re_open(char *ws,int sensitive) {
 	}
 
 	ws2[cl]=c;
-	if (c)cl++;
+        if (c) cl++;
 
 	if (!c && state) {
-            re_close(re);
-            return 0;
+            close();
+            return -1;
 	}
 	if (state==0) {
 	    if (!c) {
-		if (re->len==0) {
-                    re_close(re);
-                    return 0;
+                if (zlen==0) {
+                    close();
+                    return -1;
 		}
-		if (fast) {
-		    re->fast=1;
-		    memset(re->w,cl,256);
+                if (fast) {
+                    zfast=1;
+                    memset(zw,cl,256);
 		    cl--;
 		    for (i=0;i<cl;i++) {
-			if (sensitive) re->w[(int)ws2[i]]=cl-i;
+                        if (sensitive) zw[(int)ws2[i]]=cl-i;
 			else {
-                            re->w[toupper(ws2[i])]=cl-i;
-                            re->w[tolower(ws2[i])]=cl-i;
+                            zw[toupper(ws2[i])]=cl-i;
+                            zw[tolower(ws2[i])]=cl-i;
 			}
 		    }
 		}
-		return re;
+                return 0;
 	    }
 	    if (c==AST || c==QM) {
-                re->w[re->len++]=c;
+                zw[zlen++]=c;
                 fast=0;
 	    }
 	    else if (c==LB) {
@@ -124,16 +144,16 @@ RE *re_open(char *ws,int sensitive) {
 	    }
 	    else {
                 jump[0]=c;jump[1]=0;
-                rc=upd_t(re,jump,sensitive,0);
-                if (rc) return 0;
+                rc=upd_t(jump,sensitive,0);
+                if (rc) return -1;
 	    }
 	}
 	else if (state==2) {
-	    j=not=0;
-	    if (c==NOT) not=1;
+            j=not0=0;
+            if (c==NOT) not0=1;
 	    else if (c==RB) {
-		    re_close(re);
-		    return 0;
+                    close();
+                    return -1;
 	    }
 	    else jump[j++]=c;
 	    state=3;
@@ -141,60 +161,61 @@ RE *re_open(char *ws,int sensitive) {
 	else if (state==3) {
 	    if (c==RB) {
 		if (j==0) {
-                    re_close(re);
-                    return 0;
+                    close();
+                    return -1;
 		}
 		jump[j]=0;
 		state=0;
-		rc=upd_t(re,jump,sensitive,not);
-		if (rc) return 0;
+                rc=upd_t(jump,sensitive,not0);
+                if (rc) return -1;
 	    }
 	    else if (j<255) jump[j++]=c;
 	}
     }
-    return re;
+    zopened=1;
+    return 0;
 }
 
-#define comptab(p1,c2) (re->t[p1][(int)c2])
+#define comptab(p1,c2) (zt[p1][(int)c2])
 
-int re_wild(RE *re,unsigned char *buf,int len) {
+int re::wild(unsigned char *buf,int len0) {
     int i,j,t,eq,lp;
     int p1,p2,wildstack[2],wp,wild,len2,wlen,wlen2;
     unsigned char c,c2,*pbuf;
-    if (re->fast) {
-	lp=re->len; //accurate since no * or []
+    if (zfast) {
+        lp=zlen; //accurate since no * or []
 	for (i=lp-1,j=lp-1;j>=0;i--,j--) {
 	    eq=comptab(j,buf[i]);
 	    while (!eq) {
-		t=re->w[(int)buf[i]];  // re->w used as jump vector in fast by open
+                t=zw[(int)buf[i]];  // zw used as jump vector in fast by open
 		i += (t < lp-j) ? lp-j : t;
-		if (i>=len) return -1;
+                if (i>=len0) return -1;
 		j=lp-1;
 		eq=comptab(j,buf[i]);
 	    }
 	}
-	re->rlen=re->len;
+        zrlen=zlen;
 	return i+1;
     }
-    wlen=re->len;
-    wlen2=re->len2;
-    for (i=0;i<=len-wlen2;i++) {
+    wlen=zlen;
+    wlen2=zlen2;
+    for (i=0;i<=len0-wlen2;i++) {
 	p1=p2=wp=wild=0;
-	len2=len-i;
+        len2=len0-i;
 	pbuf=&buf[i];
 	while (1) {
 	    if (p1>=wlen) {
-		    re->rlen=p2;
+                    zrlen=p2;
 		    return i;
 	    }
-	    c=re->w[p1]; // so we can check for * or ?
+            c=zw[p1]; // so we can check for * or ?
 	    c2=pbuf[p2];
 	    if (c==AST) {
 		wp=1;
 		while (1) {
-		    c=re->w[++p1];
+                    c=zw[++p1];
 		    if (p1>=wlen) {
-                        re->rlen=len-i;
+                        zrlen=len0-i;
                         return i;
 		    }
 		    wildstack[0]=p1; // do after ++p1

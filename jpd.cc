@@ -327,7 +327,21 @@ const char* gethome2() {
     return h ? h : "";
 }
 
+#include "re.h"
+void t1() {
+    re r;
+    const char *s="xxxhay";
+    int l=strlen(s);
+    int rc=r.open("ha",0);
+    printf("rc=%d\n",rc);
+    rc=r.wild((unsigned char *)s,l);
+    printf("rc=%d fast=%d\n",rc,r.zfast);
+}
+
 int main(int argc, char **argv) {
+    t1();
+    return 0;
+
     ced e1;
     e1.main(argc,argv);
     return 0;
