@@ -7,6 +7,13 @@
 #include "ced.h"
 
 #define HIGH  999999
+void ced::ctrl_x() {
+    int c = dsp.get();
+    if (c==6  || c=='f') find();
+    else if (c=='F') find(1);
+}
+
+
 void ced::ctrl_k() {
     int c = dsp.get();
     if (c==2  || c=='b' || c=='B') ctrl_kb();

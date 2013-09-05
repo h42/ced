@@ -2,7 +2,7 @@ CPPFLAGS=-g -Wall -static
 #CC=g++
 
 PROGS=jpd mat term_t
-OBJS=term.o list.o file.o func1.o func2.o display.o history.o re.o
+OBJS=term.o list.o file.o func1.o func2.o find.o display.o history.o re.o
 
 all:history.h file.h term.h ced.h re.h $(PROGS) #getkb.o
 
@@ -32,6 +32,9 @@ func1.o :func1.cc ced.h
 
 func2.o :func2.cc ced.h
 	g++ -c $(CPPFLAGS) func2.cc
+
+find.o :find.cc ced.h
+	g++ -c $(CPPFLAGS) find.cc
 
 undo.o undo.h:undo.cc ced.h
 	g++ -c $(CPPFLAGS) undo.cc

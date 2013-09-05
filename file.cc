@@ -33,7 +33,7 @@ void ced::checksave() {
     char sx[80];
     if (!zedit) return;
     while (1) {
-        dsp.request("Do you want to save current file (y/n)? ", sx, sizeof(sx));
+        dsp.request("Do you want to save current file (y/n)?", sx, sizeof(sx),1);
         if (sx[0]=='y' || sx[0]=='Y') {
             savefile();
             return;

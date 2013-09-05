@@ -20,6 +20,7 @@ typedef unsigned char uchar;
 
 
 #include "history.h"
+#include "re.h"
 
 class ced;
 
@@ -80,6 +81,7 @@ public:
     void down();
     void end();
     void enter();
+    void find(int sensitive=0);
     void gline(int up=0);
     void gline2(int x);
     int  hist_put();
@@ -95,6 +97,7 @@ public:
     void pgdown();
     void pline();
     void request(const char *, char *, int);
+    void rfind();
     void right();
     void tab();
     void top();
@@ -102,6 +105,7 @@ public:
     void up();
     void upoff();
 
+    void ctrl_x();
     void ctrl_k();
     void ctrl_kb();
     void ctrl_kc();
@@ -153,8 +157,10 @@ private:
     int     zr0,zoverride;
     history zhist;
 
-    int  zkx1,zkx2,zky1,zky2,zkh;
-    list zcopyll;
+    int     zkx1,zkx2,zky1,zky2,zkh;
+    list    zcopyll;
+
+    re      zre;
 };
 
 #endif
@@ -287,6 +293,7 @@ void ced::main(int argc, char **argv) {
 	    else if (c==14) ins_line(1);
 	    else if (c==9) tab();
             //else if (c==21) undoer();
+            else if (c==24) ctrl_x();
 	}
 
 	else if (c<256) {
@@ -327,7 +334,6 @@ const char* gethome2() {
     return h ? h : "";
 }
 
-#include "re.h"
 void t1() {
     re r;
     const char *s="xxxhay";
@@ -339,8 +345,8 @@ void t1() {
 }
 
 int main(int argc, char **argv) {
-    t1();
-    return 0;
+    //t1();
+    //return 0;
 
     ced e1;
     e1.main(argc,argv);
