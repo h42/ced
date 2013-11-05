@@ -8,6 +8,7 @@
 #include "list.h"
 #include "term.h"
 #include "ced.h"
+#include "glob.h"
 
 #define jcpy(dst,src) {strncpy(dst,src,sizeof(dst)-1); dst[sizeof(dst)-1]=0;}
 
@@ -114,7 +115,13 @@ int ced::loadfile(const char *fn) {
 
     if (!fn || !fn[0]) dsp.request("Enter filename: ",fn2,sizeof(fn2));
     else strcpy(fn2,fn);
-    if (!fn2[0]) return -1;
+    if (!fn2[0]) {
+        getfn(dsp, ".", ".cc", fn2, sizeof(fn2));
+        if (!fn2[0]) {
+            disppage(ztop);
+            return -1;
+        }
+    }
     rc=readf(fn2);
     if (rc) strcpy(zmsg,"Open failed");
     else {

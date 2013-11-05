@@ -7,6 +7,7 @@
 #include "term.h"
 #include "list.h"
 #include "file.h"
+#include "glob.h"
 
 using namespace std;
 
@@ -249,6 +250,16 @@ void ced::newf() {
 }
 
 void ced::main(int argc, char **argv) {
+
+    /*
+    char buf[256];
+    getfn(dsp, ".", "cc,makefile", buf, sizeof(buf));
+    dsp.clrscr();
+    puts(buf);
+    dsp.get();
+    return;
+    */
+
     int c=0;
     hist *h;
     char *fn=0;
@@ -345,10 +356,10 @@ void t1() {
 }
 
 int main(int argc, char **argv) {
-    //t1();
-    //return 0;
-
     ced e1;
+
+    //t1();
+
     e1.main(argc,argv);
     return 0;
 }
