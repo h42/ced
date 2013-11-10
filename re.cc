@@ -133,6 +133,7 @@ int re::open(const char *ws,int sensitive) {
 			}
 		    }
 		}
+                zopened=1;
                 return 0;
 	    }
 	    if (c==AST || c==QM) {

@@ -315,9 +315,10 @@ void ced::main(int argc, char **argv) {
 
 	else if (c >= F1) {
 	    if (c == F12) break;
+            else if (c==F5)   rfind();
+            else if (c==F9)   swapfile();
             else if (c==F10)  loadfile();
             else if (c==F11)  savefile();
-            else if (c==F9)   swapfile();
 	    else if (c==BTAB) btab();
             else if (c==DEL)  del_char();
 	    else if (c==DOWN) down();

@@ -15,7 +15,7 @@ void ced::add_char(int c) {
 	memset(&zbuf[zbufl],' ',zx-zbufl);
 	zbufl=zx;
     }
-    if (zx-zoff >= zmaxx|| zx<zoff) upoff();
+    upoff();
 }
 
 void ced::bottom() {
@@ -50,7 +50,7 @@ void ced::btab() {
     int x = zx%4;
     if (x>0) zx-=x;
     else if (zx>0) zx-=4;
-    if (zx-zoff >= zmaxx|| zx<zoff) upoff();
+    upoff();
 }
 
 int firstnb(char *s, int l) {
@@ -68,7 +68,7 @@ int firstnb(char *s, int l) {
 void ced::ctrl_a() {
     gline();
     zx=firstnb(zbuf,zbufl);
-    if (zx<zoff) upoff();
+    upoff();
 }
 
 void ced::del_char() {
@@ -131,7 +131,7 @@ void ced::down() {
 void ced::end() {
     gline();
     zx=zbufl;
-    if (zx-zoff >= zmaxx || zx<zoff) upoff();
+    upoff();
 }
 
 void ced::enter() {
@@ -169,7 +169,7 @@ void ced::enter() {
 
 void ced::home() {
     zx=0;
-    if (zx-zoff >= zmaxx|| zx<zoff) upoff();
+    upoff();
 }
 
 void ced::ins_char(int c) {
@@ -185,7 +185,7 @@ void ced::ins_char(int c) {
 	zbuf[zx++]=c;
 	zbufl=zx;
     }
-    if (zx-zoff >= zmaxx|| zx<zoff) upoff();
+    upoff();
     displine(zbuf,zy,zbufl);
 }
 
@@ -203,7 +203,7 @@ void ced::ins_line(int disp) {
 
 void ced::left() {
     if (zx>0) zx--;
-    if (zx-zoff >= zmaxx|| zx<zoff) upoff();
+    upoff();
 }
 
 void ced::pgup() {
@@ -233,12 +233,12 @@ void ced::pgdown() {
 
 void ced::right() {
     zx++;
-    if (zx-zoff >= zmaxx|| zx<zoff) upoff();
+    upoff();
 }
 
 void ced::tab() {
     zx+=4+zx%4;
-    if (zx-zoff >= zmaxx|| zx<zoff) upoff();
+    upoff();
 }
 
 void ced::top() {
