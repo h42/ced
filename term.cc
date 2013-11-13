@@ -96,7 +96,7 @@ public:
     void underline() {tattr(curses.underline);}
     void blink() {tattr(curses.blink);}
     void exit_attr() {tattr(curses.exit);}
-    void request(const char *s, char *rbuf, int len, int flag=0);
+    int  request(const char *s, char *rbuf, int len, int flag=0);
     int  rows() {return curses.rows;}
     int  cols() {return curses.cols;}
 private:
@@ -272,7 +272,7 @@ int term::setmode(int x) {
     return 0;
 }
 
-void term::request(const char *s, char *rbuf, int len, int flag) {
+int term::request(const char *s, char *rbuf, int len, int flag) {
     int i,c,x=0,ins=1;
     cup(curses.rows,1);
     eol();
@@ -280,7 +280,7 @@ void term::request(const char *s, char *rbuf, int len, int flag) {
     int off=strlen(s)+1;
     if (len<2) {
 	rbuf[0]=0;
-	return;
+        return -1;
     }
     int xl=0;
     while (1) {
@@ -290,13 +290,18 @@ void term::request(const char *s, char *rbuf, int len, int flag) {
 	cup(curses.rows,off+x+1);
 	c=get();
 	if (c==13 || c==F12) {
-            if (c==F12) rbuf[0]=0;
-            else rbuf[xl]=0;
-	    return;
+            if (c==F12) {
+                rbuf[0]=0;
+                return -1;
+            }
+            else {
+                rbuf[xl]=0;
+                return 0;
+            }
 	}
         if (flag==1) {
             rbuf[0]=c;rbuf[1]=0;
-            return;
+            return 0;
         }
 	if (c>=' ' && c<128) {
 	    if (ins) for (i=xl; i>x; i--) rbuf[i]=rbuf[i-1];
@@ -304,7 +309,7 @@ void term::request(const char *s, char *rbuf, int len, int flag) {
 	    rbuf[x++]=c;
 	    if (x==len-1) {  // set len == 2 and get instant response
 		rbuf[x]=0;
-		return;
+                return 0;
 	    }
 	}
 	else if (c<' ') {

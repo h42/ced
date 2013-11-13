@@ -191,9 +191,10 @@ void ced::ins_char(int c) {
 
 void ced::ins_line(int disp) {
     k_ins_line();
+    gline2(zy);
+    zx=firstnb(zbuf2,zbufl2);
     pline(); zcur=-1;
     zedit=1;
-    zx=0;
     zy++;
     if (zy>ll.size()) zy=ll.size();
     ll.ins(zy,"",0);

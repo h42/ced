@@ -85,7 +85,7 @@ public:
     void underline() {tattr(curses.underline);}
     void blink() {tattr(curses.blink);}
     void exit_attr() {tattr(curses.exit);}
-    void request(const char *s, char *rbuf, int len, int flag=0);
+    int  request(const char *s, char *rbuf, int len, int flag=0);
     int  rows() {return curses.rows;}
     int  cols() {return curses.cols;}
 private:

@@ -11,6 +11,7 @@ void ced::ctrl_x() {
     int c = dsp.get();
     if (c==6  || c=='f') find();
     else if (c=='F') find(1);
+    else if (c==3 || c=='c' || c=='C') change();
 }
 
 

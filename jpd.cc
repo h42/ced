@@ -71,6 +71,7 @@ public:
     void bs_char();
     void btab();
     void bottom();
+    void change();
     void ctrl_a();
     void del_char();
     void del_eol();
@@ -99,6 +100,7 @@ public:
     void pline();
     void request(const char *, char *, int);
     void rfind();
+    void rchange();
     void right();
     void tab();
     void top();
@@ -161,7 +163,9 @@ private:
     int     zkx1,zkx2,zky1,zky2,zkh;
     list    zcopyll;
 
-    re      zre;
+    re      zre; // used for find / change
+    bool    zchange;
+    char    zchangebuf[128];
 };
 
 #endif
@@ -186,6 +190,7 @@ ced::ced() {
     dsp.fg7();
     dsp.clrscr();
     fsync(1);
+    zchange=false;
 }
 
 ced::~ced() {
@@ -316,6 +321,7 @@ void ced::main(int argc, char **argv) {
 	else if (c >= F1) {
 	    if (c == F12) break;
             else if (c==F5)   rfind();
+            else if (c==F6)   rchange();
             else if (c==F9)   swapfile();
             else if (c==F10)  loadfile();
             else if (c==F11)  savefile();

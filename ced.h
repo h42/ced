@@ -57,6 +57,7 @@ public:
     void bs_char();
     void btab();
     void bottom();
+    void change();
     void ctrl_a();
     void del_char();
     void del_eol();
@@ -85,6 +86,7 @@ public:
     void pline();
     void request(const char *, char *, int);
     void rfind();
+    void rchange();
     void right();
     void tab();
     void top();
@@ -147,7 +149,9 @@ private:
     int     zkx1,zkx2,zky1,zky2,zkh;
     list    zcopyll;
 
-    re      zre;
+    re      zre; // used for find / change
+    bool    zchange;
+    char    zchangebuf[128];
 };
 
 #endif
