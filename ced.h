@@ -95,6 +95,7 @@ public:
     void upoff();
 
     void ctrl_x();
+    void ctrl_xx();
     void ctrl_k();
     void ctrl_kb();
     void ctrl_kc();

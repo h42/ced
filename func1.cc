@@ -191,8 +191,11 @@ void ced::ins_char(int c) {
 
 void ced::ins_line(int disp) {
     k_ins_line();
-    gline2(zy);
-    zx=firstnb(zbuf2,zbufl2);
+    if (zindent) {
+        gline2(zy);
+        zx=firstnb(zbuf2,zbufl2);
+    }
+    else zx=0;
     pline(); zcur=-1;
     zedit=1;
     zy++;

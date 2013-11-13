@@ -1,19 +1,29 @@
 #include <stdio.h>
 #include <string.h>
 #include <alloca.h>
+#include <ctype.h>
 #include "list.h"
 #include "term.h"
 #include "file.h"
 #include "ced.h"
 
 #define HIGH  999999
+
 void ced::ctrl_x() {
     int c = dsp.get();
     if (c==6  || c=='f') find();
     else if (c=='F') find(1);
     else if (c==3 || c=='c' || c=='C') change();
+    else if (c==24 || c=='x' || c=='X') ctrl_xx();
 }
 
+void ced::ctrl_xx() {
+    gline(1);
+    char c=zbuf[zx];
+    if (islower(c)) c= toupper(c);
+    else c=tolower(c);
+    add_char(c);
+}
 
 void ced::ctrl_k() {
     int c = dsp.get();
