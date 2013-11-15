@@ -86,12 +86,14 @@ public:
     void find(int sensitive=0);
     void gline(int up=0);
     void gline2(int x);
+    void help();
     int  hist_put();
     void home();
     void ins_char(int c);
     void ins_line(int disp=1);
     void left();
     void main(int,char **);
+    void make();
     int  max(int x,int y) {return x>y ? x : y;}
     int  min(int x,int y) {return x<y ? x : y;}
     void newf();
@@ -321,6 +323,7 @@ void ced::main(int argc, char **argv) {
 
 	else if (c >= F1) {
 	    if (c == F12) break;
+            else if (c==F1)   help();
             else if (c==F5)   rfind();
             else if (c==F6)   rchange();
             else if (c==F9)   swapfile();
@@ -337,6 +340,7 @@ void ced::main(int argc, char **argv) {
             else if (c==PGUP)  pgup();
 	    else if (c==RIGHT) right();
             else if (c==UP)    up();
+            else if (c==ALT_M) make();
 	}
 
 	//else printf("%d\n",c);
@@ -348,9 +352,24 @@ void ced::main(int argc, char **argv) {
     }
 }
 
-const char* gethome2() {
-    const char *h = getenv("HOME");
-    return h ? h : "";
+void ced::make() {
+    if (savefile()) return;
+    dsp.clrscr();
+    fflush(stdout);
+    char buf[256], *h = getenv("HOME");
+    h=0;
+    h = h ? h : (char *)".";
+    snprintf(buf, sizeof(buf), "make 2>&1 | tee %s/ced_temp", h);
+    system(buf);
+    dsp.get();
+    disppage(ztop);
+}
+
+void ced::help() {
+    dsp.clrscr();
+    puts("CED V0.1");
+    dsp.get();
+    disppage(ztop);
 }
 
 void t1() {

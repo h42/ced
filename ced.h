@@ -72,12 +72,14 @@ public:
     void find(int sensitive=0);
     void gline(int up=0);
     void gline2(int x);
+    void help();
     int  hist_put();
     void home();
     void ins_char(int c);
     void ins_line(int disp=1);
     void left();
     void main(int,char **);
+    void make();
     int  max(int x,int y) {return x>y ? x : y;}
     int  min(int x,int y) {return x<y ? x : y;}
     void newf();
