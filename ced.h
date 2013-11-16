@@ -126,7 +126,7 @@ public:
     int  savefile();
     int  swapfile(int x=0);
 
-private:
+//private:
     //undo    zu;
     term    dsp;
     list    ll;

@@ -154,13 +154,15 @@ void ced::enter() {
     for (i=zx,j=0;i<zbufl;i++) tbuf[j++]=zbuf[i];
     zbufl=zx;
     pline();
+    int gotbrace = (zx>0 && zbuf[zx-1]=='{' ) ? 4 : 0; // must come before ins_line
     ins_line(0); // should set zcur=-1
-
     gline(1);
     if (zindent) {
 	ind=firstnb(zbuf,j);
+        ind+=gotbrace;
 	if (ind) memset(zbuf,' ',ind);
     }
+    snprintf(zmsg,sizeof(zmsg),"ind=%d",ind);
     memcpy(zbuf+ind,tbuf,j);
     zbufl=j+ind;
     zx=ind;
@@ -172,10 +174,34 @@ void ced::home() {
     upoff();
 }
 
+//
+// INS_CHAR
+//
+bool blankline(char *buf, int bufl) {
+    for (int i=0; i<bufl; i++) if (buf[i] != ' ') return false;
+    return true;
+}
+
+int match_brace(ced &e) {
+    int i,rc=0;
+    for (i=e.zy-1; i>=0; i--) {
+         e.gline2(i);
+         if (e.zbufl2>0 && e.zbuf2[e.zbufl2-1] == '{')
+             return firstnb(e.zbuf2, e.zbufl2);
+    }
+    return rc;
+}
+
 void ced::ins_char(int c) {
     gline(1);
     k_ins_char();
-    if (zx<=zbufl) {
+    if ( c=='}' && blankline(zbuf,zbufl)) {
+        zx=match_brace(*this);
+        if (zx>0) memset(zbuf,' ',zx);
+        zbuf[zx++]='}';
+        zbufl=zx;
+    }
+    else if (zx<=zbufl) {
 	for (int i=zbufl;i>zx;i--) zbuf[i]=zbuf[i-1];
 	zbuf[zx++]=c;
 	zbufl++;
@@ -189,11 +215,15 @@ void ced::ins_char(int c) {
     displine(zbuf,zy,zbufl);
 }
 
+//
+// INS_LINE
+//
 void ced::ins_line(int disp) {
     k_ins_line();
     if (zindent) {
         gline2(zy);
         zx=firstnb(zbuf2,zbufl2);
+        if (zbufl2>0 && zbuf2[zbufl2-1]=='{' ) zx+=4;
     }
     else zx=0;
     pline(); zcur=-1;
