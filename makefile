@@ -1,9 +1,9 @@
-CPPFLAGS=-g -Wall -static # -std=c++11
+CPPFLAGS=-g -Wall -static -std=c++11
 #CC=g++
 
 PROGS=jpd mat term_t
 OBJS=term.o list.o file.o func1.o func2.o find.o display.o history.o re.o\
-     str.o glob.o
+     str.o glob.o undo.o
 INCS=ced.h file.h glob.h history.h  list.h re.h str.h term.h vec.h
 
 %.h : %.cc
@@ -19,12 +19,12 @@ nlist:nlist.cc
 jpd:jpd.cc $(OBJS) $(INCS)
 	g++ $(CPPFLAGS) jpd.cc $(OBJS) -ojpd
 
-func1.o :func1.cc
+func1.o :func1.cc ced.h
 func2.o :func2.cc ced.h
 find.o :find.cc ced.h
 undo.o undo.h:undo.cc ced.h
 display.o :display.cc ced.h
-file.o :file.cc
+file.o :file.cc ced.h
 history.o:history.cc
 term.o:term.cc
 term_t:term_t.cc term.o

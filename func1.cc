@@ -7,6 +7,7 @@
 #include "ced.h"
 
 void ced::add_char(int c) {
+    zu.push();
     gline(1);
     dispchar(c,zy,zx);
     zbuf[zx]=c;
@@ -19,6 +20,7 @@ void ced::add_char(int c) {
 }
 
 void ced::bottom() {
+    zu.push();
     pline();
     zy=ll.size()-1;
     zx=0;
@@ -27,6 +29,7 @@ void ced::bottom() {
 }
 
 void ced::bs_char() {
+    zu.push();
     gline(1);
     // K_BS_CHAR not necessary because del_char handles it
     if (zx>zbufl) {
@@ -46,6 +49,7 @@ void ced::bs_char() {
 }
 
 void ced::btab() {
+    zu.push();
     gline();
     int x = zx%4;
     if (x>0) zx-=x;
@@ -66,12 +70,14 @@ int firstnb(char *s, int l) {
 }
 
 void ced::ctrl_a() {
+    zu.push();
     gline();
     zx=firstnb(zbuf,zbufl);
     upoff();
 }
 
 void ced::del_char() {
+    zu.push();
     gline(1);
     k_del_char();
     if (zx<zbufl) {
@@ -91,6 +97,7 @@ void ced::del_char() {
 }
 
 void ced::del_eol() {
+    zu.push();
     gline(1);
     k_del_eol();
     if (zx<zbufl) memset(&zbuf[zx],' ',zbufl-zx-1);
@@ -99,6 +106,7 @@ void ced::del_eol() {
 }
 
 void ced::del_line() {
+    zu.push();
     if (ll.size()==1) {
         init_k();
 	zy=0;
@@ -121,6 +129,7 @@ void ced::del_line() {
 }
 
 void ced::down() {
+    zu.push();
     pline(); zcur=-1;
     if (zy>=ll.size()-1) return;
     zy++;
@@ -129,12 +138,14 @@ void ced::down() {
 }
 
 void ced::end() {
+    zu.push();
     gline();
     zx=zbufl;
     upoff();
 }
 
 void ced::enter() {
+    zu.push();
     pline();
     if (!zins) {
 	home();
@@ -170,6 +181,7 @@ void ced::enter() {
 }
 
 void ced::home() {
+    zu.push();
     zx=0;
     upoff();
 }
@@ -193,6 +205,7 @@ int match_brace(ced &e) {
 }
 
 void ced::ins_char(int c) {
+    zu.push();
     gline(1);
     k_ins_char();
     if ( c=='}' && blankline(zbuf,zbufl)) {
@@ -219,6 +232,7 @@ void ced::ins_char(int c) {
 // INS_LINE
 //
 void ced::ins_line(int disp) {
+    zu.push();
     k_ins_line();
     if (zindent) {
         gline2(zy);
@@ -236,11 +250,13 @@ void ced::ins_line(int disp) {
 }
 
 void ced::left() {
+    zu.push();
     if (zx>0) zx--;
     upoff();
 }
 
 void ced::pgup() {
+    zu.push();
     int y=zy-ztop;
     pline(); zcur=-1;
     if (ztop==0) {
@@ -254,6 +270,7 @@ void ced::pgup() {
 }
 
 void ced::pgdown() {
+    zu.push();
     int y=zy-ztop;
     pline(); zcur=-1;
     if (ztop>=ll.size()-2) return;
@@ -266,30 +283,32 @@ void ced::pgdown() {
 }
 
 void ced::right() {
+    zu.push();
     zx++;
     upoff();
 }
 
 void ced::tab() {
+    zu.push();
     zx+=4+zx%4;
     upoff();
 }
 
 void ced::top() {
+    zu.push();
     pline(); zcur=-1;
     zy=zx=0;
     disppage(zy);
 }
 
-/*
 void ced::undoer() {
     //zu.trace();
     zu.pop();
     disppage(ztop);
 }
-*/
 
 void ced::up() {
+    zu.push();
     pline(); zcur=-1;
     if (zy>0) zy--;
     if (zy-ztop<0) disppage(zy);

@@ -15,20 +15,19 @@ void undo::trace() {
 }
 
 void undo::push(int type) {
-    zp1 = (zp1+1) % MAXUNDO;
-    if (zunder[zp1].zused) {
-	// delete zp1
-    }
-    if (zcnt < MAXUNDO) zcnt++;
+    //zp1 = (zp1+1) % MAXUNDO;
     zunder[zp1].put(*zt, type);
-    //zt->dsp.clrscr();
+    zp1++;
+    if (zcnt<MAXUNDO) zcnt++;
+    if (zp1>=MAXUNDO) zp1=0;
 }
 
 void undo::pop() {
     if (zcnt<=0) return;
+    zp1--;
+    if (zp1<0) zp1=MAXUNDO - 1;
     zunder[zp1].get(*zt);
     zcnt--;
-    zp1 = (zp1-1) % MAXUNDO;
 }
 
 void undo::del(int d1, int dlen) {
@@ -48,7 +47,7 @@ void under::put(ced &t, int type) {
     zedit2=t.zedit2;
     zindent=t.zindent;
     if (type & 1) {
-	// we never shrink buffer even if undo state has smaller buffer foer efficiency
+        // we never shrink buffer even if undo state has smaller buffer for efficiency
 	if (zbufsize != t.zbufsize && zbufsize<t.zbufsize) {
 	    if (zbuf) zbuf=(char *)realloc(zbuf,t.zbufsize);
 	    else zbuf=(char *)malloc(t.zbufsize);

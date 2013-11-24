@@ -15,7 +15,7 @@ using namespace std;
 #ifndef _CED_H
 #define _CED_H
 
-#define MAXUNDO 50
+#define MAXUNDO 4
 
 typedef unsigned char uchar;
 
@@ -25,10 +25,9 @@ typedef unsigned char uchar;
 
 class ced;
 
-/*
 class under {
 public:
-    under() {zused=0; zbuf=0;}
+    under() {zused=0; zbuf=(char *)0;}
     ~under() {}
     void get(ced&);
     void put(ced&,int type);
@@ -48,7 +47,7 @@ public:
 
 class undo {
 public:
-    undo(ced *t) {zt=t; zp1=-1; zcnt=0;}
+    void init(ced *t) {zt=t; zp1=0; zcnt=0;}
     ~undo() {};
     void trace();
     void push(int type=0);
@@ -59,7 +58,7 @@ private:
     under zunder[MAXUNDO];
     int zp1,zcnt;
 };
-*/
+
 
 class ced {
     friend class undo;
@@ -106,7 +105,7 @@ public:
     void right();
     void tab();
     void top();
-    //void undoer();
+    void undoer();
     void up();
     void upoff();
 
@@ -141,7 +140,7 @@ public:
     int  swapfile(int x=0);
 
 //private:
-    //undo    zu;
+    undo    zu;
     term    dsp;
     list    ll;
     //file    zfile;
@@ -193,6 +192,7 @@ ced::ced() {
     dsp.fg7();
     dsp.clrscr();
     fsync(1);
+    zu.init(this);
     zchange=false;
 }
 
@@ -272,6 +272,8 @@ void ced::main(int argc, char **argv) {
     hist *h;
     char *fn=0;
 
+    //zu.init(this);
+
     newfile();
     zhist.read();
     zmaxx=dsp.cols();
@@ -311,7 +313,7 @@ void ced::main(int argc, char **argv) {
 	    else if (c==20) top();
 	    else if (c==14) ins_line(1);
 	    else if (c==9) tab();
-            //else if (c==21) undoer();
+            else if (c==21) undoer();
             else if (c==24) ctrl_x();
 	}
 
