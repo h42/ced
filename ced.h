@@ -1,7 +1,7 @@
 #ifndef _CED_H
 #define _CED_H
 
-#define MAXUNDO 4
+#define MAXUNDO 50
 
 typedef unsigned char uchar;
 
@@ -13,7 +13,7 @@ class ced;
 
 class under {
 public:
-    under() {zused=0; zbuf=(char *)0;}
+    under() {zused=0; zbuf=(char *)0; zbufl=0;}
     ~under() {}
     void get(ced&);
     void put(ced&,int type);
@@ -29,6 +29,7 @@ public:
     int     zindent;
     int     zins;
     int     zx,zy,ztop,zoff;
+    int     zkx1,zkx2,zky1,zky2,zkh;
 };
 
 class undo {

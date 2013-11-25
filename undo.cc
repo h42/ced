@@ -24,10 +24,12 @@ void undo::push(int type) {
 
 void undo::pop() {
     if (zcnt<=0) return;
+    //zt->dsp.clrscr();
     zp1--;
     if (zp1<0) zp1=MAXUNDO - 1;
     zunder[zp1].get(*zt);
     zcnt--;
+    //zt->disppage(zt->ztop);
 }
 
 void undo::del(int d1, int dlen) {
@@ -46,9 +48,15 @@ void under::put(ced &t, int type) {
     zedit=t.zedit;
     zedit2=t.zedit2;
     zindent=t.zindent;
-    if (type & 1) {
+    zkh=t.zkh;
+    zkx1=t.zkx1;
+    zkx2=t.zkx2;
+    zky1=t.zky1;
+    zky2=t.zky2;
+
+    if (1) {
         // we never shrink buffer even if undo state has smaller buffer for efficiency
-	if (zbufsize != t.zbufsize && zbufsize<t.zbufsize) {
+        if (zbufsize<t.zbufsize) {
 	    if (zbuf) zbuf=(char *)realloc(zbuf,t.zbufsize);
 	    else zbuf=(char *)malloc(t.zbufsize);
 	    zbufsize=t.zbufsize;
@@ -69,6 +77,11 @@ void under::get(ced &t) {
     t.zedit=zedit;
     t.zedit2=zedit2;
     t.zindent=zindent;
+    t.zkh=zkh;
+    t.zkx1=zkx1;
+    t.zkx2=zkx2;
+    t.zky1=zky1;
+    t.zky2=zky2;
     if (zbuf) {
 	memcpy(t.zbuf,zbuf,zbufl);
 	t.zbufl=zbufl;
