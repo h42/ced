@@ -8,11 +8,14 @@ int main() {
     int i,n=10;
     char sx[80], *s;
     list ll;
+    //ll.logit(1);
     for (i=0;i<n;i++) {
 	sprintf(sx,"%d",i);
 	ll.ins(-1,sx,0);
     }
+    ll.logit(1);
     ll.del(4);
+    ll.logit(0);
     ll.del(4);
     for (i=0;i<ll.size();i++) {
 	s=ll.get(i);

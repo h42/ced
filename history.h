@@ -1,4 +1,4 @@
-const int N = 10, PM=256;
+const int MAXHIST = 10, PM=256;
 
 struct hist {
     char hfn[PM];
@@ -17,5 +17,5 @@ public:
     void read();
     void write();
 private:
-    struct hist zh[N];
+    struct hist zh[MAXHIST];
 };

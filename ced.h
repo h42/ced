@@ -124,7 +124,7 @@ public:
     int  newfile();
     int  readf(const char *fn);
     int  savefile();
-    int  swapfile(int x=0);
+    int  swapfile(int x=1);
 
 //private:
     undo    zu;

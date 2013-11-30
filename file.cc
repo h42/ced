@@ -59,8 +59,9 @@ int ced::newfile() {
 // SWAPFILE
 //
 int ced::swapfile(int x) {
+    if (x>=MAXHIST) return -1;
     if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
-    hist *h = zhist.pop(1);
+    hist *h = zhist.pop(x);
     if (h->hfn[0]) {
         loadfile(h->hfn);
     }

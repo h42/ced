@@ -7,7 +7,7 @@
 #include <string.h>
 
 //ccinclude
-const int N = 10, PM=256;
+const int MAXHIST = 10, PM=256;
 
 struct hist {
     char hfn[PM];
@@ -26,7 +26,7 @@ public:
     void read();
     void write();
 private:
-    struct hist zh[N];
+    struct hist zh[MAXHIST];
 };
 //ccinclude
 
@@ -99,10 +99,10 @@ void history::write() {
 
 int history::del(const char *fn) {
     int i,j;
-    for (i=0;i<N;i++) {
+    for (i=0;i<MAXHIST;i++) {
         if (strcmp(fn, zh[i].hfn)==0) zh[i].hfn[0]=0;
     }
-    for (i=0,j=0;i<N;i++) {
+    for (i=0,j=0;i<MAXHIST;i++) {
         if (zh[i].hfn[0]) {
             if (i != j) {
                 zh[j]=zh[i];
@@ -115,12 +115,12 @@ int history::del(const char *fn) {
 }
 
 hist * history::pop(int n) {
-    if (n<0 || n>=N) n=0;
+    if (n<0 || n>=MAXHIST) n=0;
     return &zh[n];
 }
 
 hist * history::pop(char *fn) {
-    for (int i=0;i<N;i++) {
+    for (int i=0;i<MAXHIST;i++) {
         if (strcmp(fn,zh[i].hfn)==0) return &zh[i];
     }
     return 0;
@@ -135,20 +135,20 @@ int history:: push(const char *fn,int x,int y,int off, int top) {
     h.htop=top;
     if (h.hfn[0]==0) return -1;
     del(h.hfn);
-    for (int i=N-1;i>0;i--) zh[i]=zh[i-1];
+    for (int i=MAXHIST-1;i>0;i--) zh[i]=zh[i-1];
     zh[0]=h;
     return 0;
 }
 
 void history::init() {
     int i;
-    for (i=0;i<N;i++) {
+    for (i=0;i<MAXHIST;i++) {
         zh[i].hfn[0]=0;
     }
 }
 
 void history::display() {
-    for (int i=0;i<N;i++) {
+    for (int i=0;i<MAXHIST;i++) {
         printf("%2d. %s\n",i+1,zh[i].hfn);
     }
 }
@@ -157,7 +157,7 @@ void testhist() {
     int i;
     char sx[256];
     history h;
-    for (i=0;i<N;i++) {
+    for (i=0;i<MAXHIST;i++) {
         sprintf(sx,"temp%d",i+1);
         h.push(sx,0,0,0,0);
     }

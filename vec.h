@@ -58,7 +58,7 @@ vec<T>::vec(int x) {
 template <class T>
 void vec<T>::grow(int x) {
     if (x<=0) {
-	if (zsize<=0) x=2;
+        if (zsize<=0) x=1;
 	else x=zsize*2;
     }
     if (zsize>=x) return;

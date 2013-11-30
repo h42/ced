@@ -11,7 +11,7 @@ enum FKEY {
 };
 
 struct funckey {
-    enum FKEY kval;
+    FKEY kval;
     const char *kstr;
     int status;
 };

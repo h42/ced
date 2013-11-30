@@ -138,7 +138,7 @@ public:
     int  newfile();
     int  readf(const char *fn);
     int  savefile();
-    int  swapfile(int x=0);
+    int  swapfile(int x=1);
 
 //private:
     undo    zu;
@@ -329,6 +329,7 @@ void ced::main(int argc, char **argv) {
             else if (c==F1)   help();
             else if (c==F5)   rfind();
             else if (c==F6)   rchange();
+            else if (c==F8)   swapfile(2);
             else if (c==F9)   swapfile();
             else if (c==F10)  loadfile();
             else if (c==F11)  savefile();

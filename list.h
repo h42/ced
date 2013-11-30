@@ -1,6 +1,22 @@
 #ifndef _LIST_H
 #define _LIST_H
 
+#include "vec.h"
+
+enum OP {INSERT,DELETE};
+
+const int LISTMAXUNDO = 50;
+
+struct logrec {
+    OP op;
+    int pos;
+    int bufl;
+    char *buf;
+    logrec() {bufl=0; buf=0;}
+    ~logrec();
+    void insert(OP, int, char *, int l=0);
+};
+
 struct node {
     node *fp;
     node *bp;
@@ -16,13 +32,18 @@ public:
     void del(int x);
     void ins(int x, const char *s, int len=0);
     void ins(const char *s, int len=0) {ins(-1,s,0);}
-    void upd(int x, const char *s, int len=0);
+    void upd(int x, const char *s, int len=0); // NOT IMPLEMENTED
     char *get(int n);
     int  size() {return zsize;}
+    void upd_log(OP iop, int ipos, char *ibuf, int ilen);
+    void logit(int x) {zlogit=x;}
 private:
     int zsize,zpos;
     node *zcur;
     node zroot;
+    int  zlogit;
+    vec<logrec> zlog[LISTMAXUNDO];
+    int zp1,zcnt;
 };
 
 #endif

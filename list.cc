@@ -1,11 +1,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
-//#include <unistd.h>
 
 //ccinclude
 #ifndef _LIST_H
 #define _LIST_H
+
+#include "vec.h"
+
+enum OP {INSERT,DELETE};
+
+const int LISTMAXUNDO = 50;
+
+struct logrec {
+    OP op;
+    int pos;
+    int bufl;
+    char *buf;
+    logrec() {bufl=0; buf=0;}
+    ~logrec();
+    void insert(OP, int, char *, int l=0);
+};
 
 struct node {
     node *fp;
@@ -22,17 +37,54 @@ public:
     void del(int x);
     void ins(int x, const char *s, int len=0);
     void ins(const char *s, int len=0) {ins(-1,s,0);}
-    void upd(int x, const char *s, int len=0);
+    void upd(int x, const char *s, int len=0); // NOT IMPLEMENTED
     char *get(int n);
     int  size() {return zsize;}
+    void upd_log(OP iop, int ipos, char *ibuf, int ilen);
+    void logit(int x) {zlogit=x;}
 private:
     int zsize,zpos;
     node *zcur;
     node zroot;
+    int  zlogit;
+    vec<logrec> zlog[LISTMAXUNDO];
+    int zp1,zcnt;
 };
 
 #endif
 //ccinclude
+
+void list::upd_log(OP iop, int ipos, char *ibuf, int ilen) {
+    if (zlogit) {
+        vec<logrec> *v=&zlog[zp1];
+        if (v->size()<=zcnt) v->grow();
+        v->sp(0); // MUST BE FIXED FOR MULTIPLE UPDATES
+        if (iop==DELETE) (*v)[v->sp()].insert(DELETE,ipos,ibuf,ilen);
+        else if (iop==INSERT) (*v)[v->sp()].insert(INSERT,ipos,ibuf,ilen);
+        zp1++;
+        if (zcnt<LISTMAXUNDO) zcnt++;
+        if (zp1>=LISTMAXUNDO) zp1=0;
+    }
+}
+
+logrec::~logrec() {
+    if (buf) free(buf);
+}
+
+void logrec::insert(OP iop, int ipos, char *ibuf, int ilen) {
+    op=iop; // HANDLES COMMIT CASE
+    if (iop==DELETE) pos=ipos;
+    else if (iop==INSERT) {
+        pos=ipos;
+        if (ilen<=0) ilen=strlen(ibuf)+1;
+        if (ilen>bufl) {
+            if (!buf) buf=(char *)malloc(ilen);
+            else buf=(char *)realloc(buf,ilen);
+            bufl=ilen;
+        }
+        memcpy(buf,ibuf,bufl);
+    }
+}
 
 node *newNode(int l) {
     node *n;
@@ -66,7 +118,8 @@ char *list::get(int x) {
 void list::del(int x) {
     node *cur;
     if (x<0 || x>=zsize) return;
-    get(x);
+    char *buf=get(x);
+    if (zlogit && buf) upd_log(INSERT,x,buf,0);
     cur = zcur;
     cur->bp->fp = cur->fp;
     cur->fp->bp = cur->bp;
@@ -82,6 +135,7 @@ void list::ins(int x, const char *s, int len) {
     if (x<0) x=zsize;
     if (x>0) get(x-1);
     else zcur = &zroot;
+    if (zlogit) upd_log(DELETE,x,0,0);
     cur=zcur;
     if (len<=0) len=strlen((char *)s);
     node *n1 = newNode(len);
@@ -107,6 +161,8 @@ void list::init() {
     zcur->buf[0]=0;
     zroot.fp=zcur;
     zroot.bp=zcur;
+    zlogit=0;
+    zp1=zcnt=0;
     return;
 }
 
