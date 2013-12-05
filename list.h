@@ -36,7 +36,10 @@ public:
     char *get(int n);
     int  size() {return zsize;}
     void upd_log(OP iop, int ipos, char *ibuf, int ilen);
-    void logit(int x) {zlogit=x;}
+    void set_log_ptr(int x);
+    void rollback(int p1);
+    void log_on() {zlogit=1;}
+    void log_off() {zlogit=0;}
 private:
     int zsize,zpos;
     node *zcur;

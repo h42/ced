@@ -47,11 +47,14 @@ void ced::checksave() {
 // NEWFILE
 //
 int ced::newfile() {
+    ll.log_off();
     checksave();
     if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
     ll.reset();
     ll.ins(0,"",0);
     zx=zy=ztop=zoff=zedit=zedit2=0;
+    ll.log_on();
+    zu.reset();
     return 0;
 }
 
@@ -123,7 +126,12 @@ int ced::loadfile(const char *fn) {
             return -1;
         }
     }
+
+    zu.reset();
+    ll.log_off();
     rc=readf(fn2);
+    ll.log_on();
+
     if (rc) strcpy(zmsg,"Open failed");
     else {
         hist *h=zhist.pop(fn2);

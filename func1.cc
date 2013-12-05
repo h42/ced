@@ -205,8 +205,8 @@ int match_brace(ced &e) {
 }
 
 void ced::ins_char(int c) {
-    gline(1);
     zu.push();
+    gline(1);
     k_ins_char();
     if ( c=='}' && blankline(zbuf,zbufl)) {
         zx=match_brace(*this);

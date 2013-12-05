@@ -41,7 +41,10 @@ public:
     char *get(int n);
     int  size() {return zsize;}
     void upd_log(OP iop, int ipos, char *ibuf, int ilen);
-    void logit(int x) {zlogit=x;}
+    void set_log_ptr(int x);
+    void rollback(int p1);
+    void log_on() {zlogit=1;}
+    void log_off() {zlogit=0;}
 private:
     int zsize,zpos;
     node *zcur;
@@ -54,18 +57,39 @@ private:
 #endif
 //ccinclude
 
+//
+// LOG FUNCS
+//
+
+void list::set_log_ptr(int x) {
+    zp1=x;
+    vec<logrec> *v=&zlog[zp1];
+    v->sp(0);
+}
+
 void list::upd_log(OP iop, int ipos, char *ibuf, int ilen) {
     if (zlogit) {
+        if (zp1<0 || zp1>=LISTMAXUNDO) return;
         vec<logrec> *v=&zlog[zp1];
-        if (v->size()<=zcnt) v->grow();
-        v->sp(0); // MUST BE FIXED FOR MULTIPLE UPDATES
-        if (iop==DELETE) (*v)[v->sp()].insert(DELETE,ipos,ibuf,ilen);
-        else if (iop==INSERT) (*v)[v->sp()].insert(INSERT,ipos,ibuf,ilen);
-        zp1++;
-        if (zcnt<LISTMAXUNDO) zcnt++;
-        if (zp1>=LISTMAXUNDO) zp1=0;
+        int sp = (*v).sp();
+        if (v->size()<=sp) v->grow();
+        if (iop==DELETE) (*v)[sp].insert(DELETE,ipos,ibuf,ilen);
+        else if (iop==INSERT) (*v)[sp].insert(INSERT,ipos,ibuf,ilen);
+        (*v).sp(sp+1);
     }
 }
+
+void list::rollback(int p1) {
+    vec<logrec> *v=&zlog[p1];
+    int save=zlogit;
+    for (int i=(*v).sp()-1; i>=0; i--) {
+        logrec *rb= &(*v)[i];
+        if (rb->op==INSERT) ins(rb->pos, rb->buf, rb->bufl);
+        else if (rb->op==DELETE) del(rb->pos);
+    }
+    (*v).sp(0);
+    zlogit=save;
+};
 
 logrec::~logrec() {
     if (buf) free(buf);
@@ -85,6 +109,11 @@ void logrec::insert(OP iop, int ipos, char *ibuf, int ilen) {
         memcpy(buf,ibuf,bufl);
     }
 }
+
+
+//
+// LIST FUNCS
+//
 
 node *newNode(int l) {
     node *n;

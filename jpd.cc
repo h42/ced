@@ -8,6 +8,7 @@
 #include "list.h"
 #include "file.h"
 #include "glob.h"
+#include "log.h"
 
 using namespace std;
 
@@ -54,6 +55,7 @@ public:
     void push(int type=0);
     void pop();
     void del(int d1, int dlen=1);
+    void reset() {zp1=zcnt=0;}
 private:
     ced *zt;
     under zunder[MAXUNDO];

@@ -16,7 +16,7 @@ void undo::trace() {
 }
 
 void undo::push(int type) {
-    //zp1 = (zp1+1) % MAXUNDO;
+    zt->ll.set_log_ptr(zp1);
     zunder[zp1].put(*zt, type);
     zp1++;
     if (zcnt<MAXUNDO) zcnt++;
@@ -25,18 +25,11 @@ void undo::push(int type) {
 
 void undo::pop() {
     if (zcnt<=0) return;
-    //zt->dsp.clrscr();
     zp1--;
     if (zp1<0) zp1=MAXUNDO - 1;
+    zt->ll.rollback(zp1);
     zunder[zp1].get(*zt);
     zcnt--;
-    //zt->disppage(zt->ztop);
-}
-
-void undo::del(int d1, int dlen) {
-    if (zcnt<=0) return;
-    zunder[zp1].zdel1=d1;
-    zunder[zp1].zdlen=dlen;
 }
 
 void under::put(ced &t, int type) {
@@ -62,9 +55,8 @@ void under::put(ced &t, int type) {
 	    else zbuf=(char *)malloc(t.zbufsize);
 	    zbufsize=t.zbufsize;
 	}
-	memcpy(zbuf,t.zbuf,t.zbufl);
+        memcpy(zbuf,t.zbuf,t.zbufsize);
 	zbufl=t.zbufl;
-	zbuf[zbufl]=0;
     }
     zused |= 1;
 }
@@ -83,13 +75,7 @@ void under::get(ced &t) {
     t.zkx2=zkx2;
     t.zky1=zky1;
     t.zky2=zky2;
-    if (zbuf) {
-	memcpy(t.zbuf,zbuf,zbufl);
-	t.zbufl=zbufl;
-    }
+    if (zbuf) memcpy(t.zbuf,zbuf,zbufsize);
     t.zbufl=zbufl;
-    if (zdel1>=0) {
-	for (int i=0; i<zdlen; i++) t.ll.del(zdel1);
-    }
 }
 
