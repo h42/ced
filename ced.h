@@ -8,6 +8,7 @@ typedef unsigned char uchar;
 
 #include "history.h"
 #include "re.h"
+#include "log.h"
 
 class ced;
 
@@ -86,7 +87,7 @@ public:
     void newf();
     void pgup();
     void pgdown();
-    void pline();
+    void pline(int rollback=0);
     void request(const char *, char *, int);
     void rfind();
     void rchange();
@@ -156,6 +157,8 @@ public:
     re      zre; // used for find / change
     bool    zchange;
     char    zchangebuf[128];
+
+    log     zlog;
 };
 
 #endif

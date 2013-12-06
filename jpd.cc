@@ -8,7 +8,6 @@
 #include "list.h"
 #include "file.h"
 #include "glob.h"
-#include "log.h"
 
 using namespace std;
 
@@ -23,6 +22,7 @@ typedef unsigned char uchar;
 
 #include "history.h"
 #include "re.h"
+#include "log.h"
 
 class ced;
 
@@ -101,7 +101,7 @@ public:
     void newf();
     void pgup();
     void pgdown();
-    void pline();
+    void pline(int rollback=0);
     void request(const char *, char *, int);
     void rfind();
     void rchange();
@@ -171,6 +171,8 @@ public:
     re      zre; // used for find / change
     bool    zchange;
     char    zchangebuf[128];
+
+    log     zlog;
 };
 
 #endif
@@ -206,6 +208,7 @@ ced::~ced() {
 void ced::gline(int up) {
     int i;
     char c,*llbuf;
+    //zlog.put("gline up=%d zy=%d zcur=%d", up,zy,zcur);
     if (up) zedit=zedit2=1;
     if (zy==zcur) return; // ALL FUNCTIONS MUST SET ZY!=ZCUR IF ZBUF NOT VALID
     zcur=zy;
@@ -223,6 +226,7 @@ void ced::gline(int up) {
 
 void ced::gline2(int x) {
     int i;
+    //zlog.put("gline2 x=%d", x);
     char c,*cur=ll.get(x);
     for (i=zbufl2=0;i<zbufsize && zbufl2<zbufsize;i++) {
 	if (!(c=cur[i])) break;
@@ -235,9 +239,10 @@ void ced::gline2(int x) {
     }
 }
 
-void ced::pline() {
+void ced::pline(int rollback) {
     int i,j;
-    if (!zedit2) return;
+    //zlog.put("pline zedit2=%d", zedit2);
+    if (!zedit2 && !rollback) return;
     //listgetopt(-1);
     j=zbufl;
     zbufl=0;
@@ -275,7 +280,7 @@ void ced::main(int argc, char **argv) {
     hist *h;
     char *fn=0;
 
-    //zu.init(this);
+    //zlog.open("xxx");
 
     newfile();
     zhist.read();
@@ -303,6 +308,7 @@ void ced::main(int argc, char **argv) {
 	zmsg[0]=0;
 	dsp.cup(zy+1-ztop,zx+1-zoff);
 	fflush(stdout);
+        //zlog.put("----------------");
 	c=dsp.get();
 	if (c<=26) {
 	    if (c==1) ctrl_a();
