@@ -91,6 +91,7 @@ public:
     void request(const char *, char *, int);
     void rfind();
     void rchange();
+    void recent();
     void right();
     void tab();
     void top();

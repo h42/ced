@@ -206,7 +206,6 @@ int match_brace(ced &e) {
 
 void ced::ins_char(int c) {
     gline();
-    //zlog.put("ins_char c=%c zbufl=%d", c, zbufl);
     zu.push();
     gline(1);
     k_ins_char();
@@ -220,7 +219,6 @@ void ced::ins_char(int c) {
 	for (int i=zbufl;i>zx;i--) zbuf[i]=zbuf[i-1];
 	zbuf[zx++]=c;
 	zbufl++;
-        //zlog.put("  ins_char zbufl=%d", zbufl);
     }
     else {
 	memset(&zbuf[zbufl],' ',zx-zbufl);
@@ -306,7 +304,6 @@ void ced::top() {
 }
 
 void ced::undoer() {
-    //zu.trace();
     zu.pop();
     pline(1); // must update zbuf with pline even if zedit2==0
     disppage(ztop);

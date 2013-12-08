@@ -60,7 +60,7 @@ static bool readint(const char *s, int *sum) {
 }
 
 char * getfn(term &dsp, const char *dir, const char *suffix, char *buf, int bufl) {
-    int i,top=0,Y=10,c,p1=0;
+    int i,top=0,Y=22,c,p1=0;
     vec<str> zv;
     getfiles(dir,suffix,zv);
     buf[0]=0;

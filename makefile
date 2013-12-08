@@ -35,7 +35,8 @@ glob.o:glob.cc
 vec.o:vec.cc
 
 install:jpd
-	install jpd /usr/local/bin/ced
+	install -m755 jpd /usr/local/bin/ced
+	install -m755 jpd /usr/local/bin/e
 
 clean:
 	-rm *.o $(PROGS)

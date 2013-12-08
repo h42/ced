@@ -59,6 +59,30 @@ int ced::newfile() {
 }
 
 //
+// RECENT
+//
+void ced::recent() {
+    dsp.clrscr();
+    hist *h;
+    int i,c;
+    for (i=0; i<MAXHIST && i<9; i++) {
+        h = zhist.pop(i);
+        if (!h->hfn[0]) break;
+        printf("%d. %s\n", i+1, h->hfn);
+    }
+    printf("\nSelect file: ");
+    c = dsp.get() - '1'; // NOTE ( - '1' ) for zero offset
+    if (c>=0 && c<=8 && c<i) {
+        h = zhist.pop(c);
+        char buf[512]; // loadfile updates history vector so necessary
+        strncpy(buf,h->hfn,511);
+        loadfile(buf);
+    }
+    else disppage(ztop);
+}
+
+
+//
 // SWAPFILE
 //
 int ced::swapfile(int x) {

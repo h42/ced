@@ -24,13 +24,11 @@ void undo::push(int type) {
 }
 
 void undo::pop() {
-    //zt->zlog.put("pop");
     if (zcnt<=0) return;
     zp1--;
     if (zp1<0) zp1=MAXUNDO - 1;
     zt->ll.rollback(zp1);
     zunder[zp1].get(*zt);
-    //zt->zlog.put("  pop zbufl=%d", zt->zbufl);
     zcnt--;
 }
 
@@ -64,7 +62,6 @@ void under::put(ced &t, int type) {
 }
 
 void under::get(ced &t) {
-    //t.zlog.put("under::get");
     t.zcur=zcur;
     t.zx=zx;
     t.zy=zy;
@@ -80,6 +77,5 @@ void under::get(ced &t) {
     t.zky2=zky2;
     if (zbuf) memcpy(t.zbuf,zbuf,zbufsize);
     t.zbufl=zbufl;
-    //t.zlog.put("  get zbufl=%d %d - zbuf=%s %s", zbufl,t.zbufl, zbuf,t.zbuf);
 }
 

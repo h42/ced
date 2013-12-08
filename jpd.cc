@@ -105,6 +105,7 @@ public:
     void request(const char *, char *, int);
     void rfind();
     void rchange();
+    void recent();
     void right();
     void tab();
     void top();
@@ -267,15 +268,6 @@ void ced::newf() {
 
 void ced::main(int argc, char **argv) {
 
-    /*
-    char buf[256];
-    getfn(dsp, ".", "cc,makefile", buf, sizeof(buf));
-    dsp.clrscr();
-    puts(buf);
-    dsp.get();
-    return;
-    */
-
     int c=0;
     hist *h;
     char *fn=0;
@@ -317,11 +309,11 @@ void ced::main(int argc, char **argv) {
 	    else if (c==5) del_eol();
             //else if (c==7) hist_put();
 	    else if (c==8) bs_char();
+	    else if (c==9) tab();
             else if (c==11) ctrl_k();
 	    else if (c==13) enter();
-	    else if (c==20) top();
 	    else if (c==14) ins_line(1);
-	    else if (c==9) tab();
+	    else if (c==20) top();
             else if (c==21) undoer();
             else if (c==24) ctrl_x();
 	}
@@ -353,6 +345,7 @@ void ced::main(int argc, char **argv) {
 	    else if (c==RIGHT) right();
             else if (c==UP)    up();
             else if (c==ALT_M) make();
+            else if (c==ALT_R) recent();
 	}
 
 	//else printf("%d\n",c);
