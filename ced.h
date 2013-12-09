@@ -49,6 +49,7 @@ private:
 };
 
 
+
 class ced {
     friend class undo;
     friend class under;
@@ -74,6 +75,7 @@ public:
     void find(int sensitive=0);
     void gline(int up=0);
     void gline2(int x);
+    void go();
     void help();
     int  hist_put();
     void home();
@@ -93,6 +95,7 @@ public:
     void rchange();
     void recent();
     void right();
+    void scroll(int);
     void tab();
     void top();
     void undoer();

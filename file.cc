@@ -167,6 +167,7 @@ int ced::loadfile(const char *fn) {
             zedit=zedit2=0;
         }
         else  zx=zy=ztop=zoff=zedit=zedit2=0;
+        if (zy<0 || zy>ll.size()-1 || ztop<0 || ztop>ll.size()-1) ztop=zy=0;
 	disppage(ztop);
 	sprintf(zmsg,"%s loaded",fn2);
     }

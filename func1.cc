@@ -22,10 +22,12 @@ void ced::add_char(int c) {
 void ced::bottom() {
     zu.push();
     pline();
-    zy=ll.size()-1;
-    zx=0;
-    gline();
+    zy=ll.size()-zmaxy+2;
+    zy = (zy>=0) ? zy : 0;
     disppage(zy);
+    zx=0;
+    zy=ll.size()-1;
+    gline();
 }
 
 void ced::bs_char() {
@@ -180,6 +182,17 @@ void ced::enter() {
     disppage(ztop);
 }
 
+void ced::go() {
+    char buf[20];
+    zu.push();
+    request("Enter line number: ", buf, sizeof(buf)-1);
+    int i = atoi(buf) - 1;
+    if (i<0 || i>=ll.size()) return;
+    pline();
+    zy=i;
+    if (zy<ztop || zy>ztop+zmaxy-3) disppage(ztop=zy);
+}
+
 void ced::home() {
     zu.push();
     zx=0;
@@ -288,6 +301,16 @@ void ced::right() {
     zu.push();
     zx++;
     upoff();
+}
+
+void ced::scroll(int x) {
+    zu.push();
+    ztop += x;
+    if (ztop<0) ztop=0;
+    if (ztop>ll.size()-1) ztop=ll.size()-1;
+    if (zy<ztop) zy=ztop;
+    else if (zy>ztop+zmaxy-2) zy = ztop+zmaxy-2;
+    disppage(ztop);
 }
 
 void ced::tab() {
