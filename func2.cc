@@ -9,12 +9,20 @@
 
 #define HIGH  999999
 
+void set_indent(ced *t);
+
 void ced::ctrl_x() {
     int c = dsp.get();
     if (c==6  || c=='f') find();
     else if (c=='F') find(1);
     else if (c==3 || c=='c' || c=='C') change();
+    else if (c==9 || c=='i' || c=='I') set_indent(this);
     else if (c==24 || c=='x' || c=='X') ctrl_xx();
+}
+
+void set_indent(ced *t) {
+    t->zindent = t->zindent ? 0 : 1;
+    snprintf(t->zmsg, sizeof(t->zmsg), "zindent %s", t->zindent ? "on" : "off");
 }
 
 void ced::ctrl_xx() {

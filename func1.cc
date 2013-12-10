@@ -222,7 +222,7 @@ void ced::ins_char(int c) {
     zu.push();
     gline(1);
     k_ins_char();
-    if ( c=='}' && blankline(zbuf,zbufl)) {
+    if ( zindent && c=='}' && blankline(zbuf,zbufl)) {
         zx=match_brace(*this);
         if (zx>0) memset(zbuf,' ',zx);
         zbuf[zx++]='}';
