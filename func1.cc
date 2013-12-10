@@ -40,14 +40,14 @@ void ced::bs_char() {
     }
     if (zx>0) {
 	zx--;
-	del_char();
+        del_char(0);
 	return;
     }
     if (zy<=0) return;
     pline();
-    up();
-    end();
-    del_char();
+    up(0);
+    end(0);
+    del_char(0);
 }
 
 void ced::btab() {
@@ -78,14 +78,14 @@ void ced::ctrl_a() {
     upoff();
 }
 
-void ced::del_char() {
-    zu.push();
+void ced::del_char(int pushit) {
+    if (pushit) zu.push();
     gline(1);
     k_del_char();
     if (zx<zbufl) {
 	if (zbufl<=0) return;
 	for (int i=zx; i<zbufl-1; i++) zbuf[i]=zbuf[i+1];
-	zbufl--;
+        zbuf[--zbufl]=0;
 	displine(zbuf,zy,zbufl);
 	return;
     }
@@ -139,8 +139,8 @@ void ced::down() {
     disppage(ztop+1);
 }
 
-void ced::end() {
-    zu.push();
+void ced::end(int pushit) {
+    if (pushit) zu.push();
     gline();
     zx=zbufl;
     upoff();
@@ -332,8 +332,8 @@ void ced::undoer() {
     disppage(ztop);
 }
 
-void ced::up() {
-    zu.push();
+void ced::up(int pushit) {
+    if (pushit) zu.push();
     pline(); zcur=-1;
     if (zy>0) zy--;
     if (zy-ztop<0) disppage(zy);

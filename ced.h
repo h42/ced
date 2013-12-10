@@ -62,7 +62,7 @@ public:
     void bottom();
     void change();
     void ctrl_a();
-    void del_char();
+    void del_char(int pushit=1);
     void del_eol();
     void del_line();
     void dispchar(int c, int y=-1, int x=-1);
@@ -70,7 +70,7 @@ public:
     void disppage(int top);
     void dispstat();
     void down();
-    void end();
+    void end(int pushit=1);
     void enter();
     void find(int sensitive=0);
     void gline(int up=0);
@@ -99,7 +99,7 @@ public:
     void tab();
     void top();
     void undoer();
-    void up();
+    void up(int pushit=1);
     void upoff();
 
     void ctrl_x();
