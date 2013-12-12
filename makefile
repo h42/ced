@@ -39,4 +39,4 @@ install:jpd
 	install -m755 jpd /usr/local/bin/e
 
 clean:
-	-rm *.o $(PROGS)
+	-rm *.o *.h $(PROGS)

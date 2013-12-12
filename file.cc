@@ -111,8 +111,8 @@ int ced::savefile() {
 	return 0;
     }
     int l;
-    for (int i=0; i<ll.size(); i++) {
-	buf=ll.get(i);
+    for (int ii=0; ii<ll.size(); ii++) {
+        buf=ll.get(ii);
 	l=strlen(buf);
 	if (l+1 >= zfbufsize) {
 	    zfbufsize *= 2;

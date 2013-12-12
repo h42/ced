@@ -157,17 +157,19 @@ public:
     int     zbufl2;
     int     zbufsize;
     char   *zfbuf;
+    int     zcur;
     int     zfbufsize;
     int     zindent;
     int     zins;
-    int     zcur,zx,zy,ztop,zoff;
     int     zedit,zedit2;
     int     ztabsize;
+    int     ztabcomp;
     int     zmaxx,zmaxy;
     char    zmsg[80];
     char    zfn[256];
     int     zr0,zoverride;
     history zhist;
+    int     zx,zy,ztop,zoff;
 
     int     zkx1,zkx2,zky1,zky2,zkh;
     list    zcopyll;
@@ -195,6 +197,7 @@ ced::ced() {
     zcur=-1;
     zmsg[0]=0;
     ztabsize=8;
+    ztabcomp=1;
     zkh=0; zkx1 = zkx2 = zky1 = zky2 = -1;
     zfn[0]=zr0=zoverride=0;
     dsp.setmode(1);
