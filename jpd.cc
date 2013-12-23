@@ -313,14 +313,14 @@ void ced::main(int argc, char **argv) {
 	    else if (c==2) bottom();
 	    else if (c==4) del_line();
 	    else if (c==5) del_eol();
-            else if (c==6) scroll(-1);
+            else if (c==6) scroll(1);
             else if (c==7) go();
 	    else if (c==8) bs_char();
 	    else if (c==9) tab();
             else if (c==11) ctrl_k();
 	    else if (c==13) enter();
 	    else if (c==14) ins_line(1);
-            else if (c==18) scroll(1);
+            else if (c==18) scroll(-1);
 	    else if (c==20) top();
             else if (c==21) undoer();
             else if (c==24) ctrl_x();

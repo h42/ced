@@ -264,6 +264,7 @@ bool ced::in_k(int x, int y) {
 void ced::init_k() {
     zkh=0;
     zkx1=zkx2=zky1=zky2=-1;
+    disppage(ztop);
 }
 
 //
