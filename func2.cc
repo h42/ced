@@ -46,6 +46,38 @@ void ced::ctrl_k() {
     else if (c==20  || c=='t' || c=='T')
         snprintf(zmsg,sizeof(zmsg),"in_k=%d x1=%d x2=%d",in_k(),zkx1,zkx2);
     else if (c==22   || c=='v' || c=='V') ctrl_kv();
+    else if (c=='<' || c=='>') ctrl_k_indent(c=='<' ? -1 : 1);
+}
+
+void ced::ctrl_k_indent(int dir) {
+    if (!zkh) {
+        snprintf(zmsg, sizeof(zmsg)-1, "no block to indent");
+        return;
+    }
+    char buf[80];
+    request("Enter number to adjust: ", buf, sizeof(buf)-1);
+    int x = atoi(buf);
+    if (x==0) return;
+
+    zu.push();
+    const int IMAX=20;
+    if (x>IMAX) x=IMAX;
+    pline();
+    for (zy=zky1; zy<=zky2; zy++) {
+        gline(1);
+        if (dir<0) {
+            if (x>=zbufl) x=zbufl;
+            else memmove(zbuf,zbuf+x,zbufl-x);
+            zbuf[(zbufl-=x)]=0;
+        }
+        else if (x>0) {
+            memmove(zbuf+x, zbuf, zbufl);
+            memset(zbuf,' ',x);
+            zbuf[(zbufl+=x)]=0;
+        }
+        pline();
+    }
+    disppage(ztop);
 }
 
 int ced::check_k() {
@@ -344,4 +376,6 @@ void ced::k_ins_line() {
         return;
     }
 }
+
+
 

@@ -127,6 +127,7 @@ public:
     void ctrl_kp();
     void ctrl_ks();
     void ctrl_kv();
+    void ctrl_k_indent(int);
     int  check_k();
     void disp_k();
     void init_k();
