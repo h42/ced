@@ -158,6 +158,8 @@ int ced::loadfile(const char *fn) {
 
     if (rc) strcpy(zmsg,"Open failed");
     else {
+	ztabcomp=(strcmp(fn2,"makefile")==0 ||
+		  strcmp(fn2,"Makefile")==0) ? 1 : 0;
         hist *h=zhist.pop(fn2);
         if (h) {
             zx=h->hx;

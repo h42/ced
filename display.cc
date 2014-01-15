@@ -72,7 +72,7 @@ void ced::dispstat() {
 	dsp.puts(zmsg,0,zmaxy,1);
         dsp.fg7();
     }
-    sprintf(sx,"%4d,%d %d  ",zy+1,zx+1,zoff);
+    sprintf(sx,"%4d,%d %d  ",zy+1,zx+1,ztabcomp);
     sx[12]=0;
     dsp.puts(sx,0,zmaxy,zmaxx-12);
 }

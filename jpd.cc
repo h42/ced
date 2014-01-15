@@ -198,7 +198,7 @@ ced::ced() {
     zcur=-1;
     zmsg[0]=0;
     ztabsize=8;
-    ztabcomp=1;
+    ztabcomp=0;
     zkh=0; zkx1 = zkx2 = zky1 = zky2 = -1;
     zfn[0]=zr0=zoverride=0;
     dsp.setmode(1);
@@ -247,11 +247,14 @@ void ced::gline2(int x) {
     }
 }
 
+#define TAB 8
+#define tabstop(x) ((x)+(TAB-(x)%TAB))
 void ced::pline(int rollback) {
-    int i,j;
+    int i,j,k,state,c;
     //zlog.put("pline zedit2=%d", zedit2);
     if (!zedit2 && !rollback) return;
     //listgetopt(-1);
+
     j=zbufl;
     zbufl=0;
     for (i=j-1;i>=0;i--)
@@ -260,6 +263,33 @@ void ced::pline(int rollback) {
 	    break;
 	}
     zbuf[zbufl]=0;
+
+    if (ztabcomp) {
+        for (i=j=k=state=0; i<zbufl; i++) {
+            c=zbuf[i];
+            if (state==0) {
+                if (c==' ') {
+                    k++;
+                    if (k==TAB) {
+                        zbuf[j++]=9;
+                        k=0;
+                    }
+                }
+                else {
+                    state=1;
+                    if (k) {
+                        memset(&zbuf[j],' ',k);
+                        j+=k;
+                    }
+                    zbuf[j++]=c;
+                }
+            }
+            else zbuf[j++]=c;
+        }
+        zbuf[j]=0;
+        zbufl=j;
+    }
+
     ll.del(zcur);
     zbuf[zbufl]=0;
     ll.ins(zcur,zbuf,zbufl+1);
