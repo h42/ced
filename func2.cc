@@ -4,7 +4,6 @@
 #include <ctype.h>
 #include "list.h"
 #include "term.h"
-#include "file.h"
 #include "ced.h"
 
 #define HIGH  999999

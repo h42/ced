@@ -6,7 +6,6 @@
 #include <string.h>
 #include "term.h"
 #include "list.h"
-#include "file.h"
 #include "glob.h"
 
 using namespace std;
@@ -384,6 +383,7 @@ void ced::main(int argc, char **argv) {
 	    else if (c==RIGHT) right();
             else if (c==UP)    up();
             else if (c==ALT_M) make();
+            else if (c==ALT_N) newfile();
             else if (c==ALT_R) recent();
 	}
 

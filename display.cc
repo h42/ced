@@ -2,7 +2,6 @@
 #include <string.h>
 #include "list.h"
 #include "term.h"
-#include "file.h"
 #include "ced.h"
 
 void ced::dispchar(int c, int y, int x) {
@@ -65,7 +64,7 @@ void ced::dispstat() {
 	dsp.eol();
     }
     if (zmsg[0]) {
-	int mlen=(zmaxy>50) ? 50 : zmaxy-1;
+        int mlen=(zmaxx>50) ? 50 : zmaxx-1;
 	//dsp.cup(rows,1);
 	zmsg[mlen]=0;
         dsp.fg6();

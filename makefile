@@ -8,7 +8,7 @@ CPPFLAGS=-g -Wall -static -std=c++11
 PROGS=jpd # list_t mat term_t
 OBJS=term.o list.o file.o func1.o func2.o find.o display.o history.o re.o\
      str.o glob.o undo.o log.o
-INCS=ced.h file.h glob.h history.h  list.h re.h str.h term.h vec.h log.h
+INCS=ced.h glob.h history.h  list.h re.h str.h term.h vec.h log.h
 
 %.h : %.cc
 	awkinc < $< > $@

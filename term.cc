@@ -18,7 +18,7 @@
 enum FKEY {
     F1=1000,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17,F18,
     F19,F20,F21,F22,F23,F24,INS,DEL,HOME,HOME2,END,END2,PGUP,PGDOWN,
-    BTAB,UP,DOWN,RIGHT,LEFT,ZERO,ERROR,ALT_M,ALT_R
+    BTAB,UP,DOWN,RIGHT,LEFT,ZERO,ERROR,ALT_M,ALT_N,ALT_R
 };
 
 struct funckey {
@@ -220,6 +220,7 @@ int term::get() {
         else {
             c-=128;
             if (c=='m') return ALT_M;
+            else if (c=='n') return ALT_N;
             else if (c=='r') return ALT_R;
         }
     }

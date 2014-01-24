@@ -3,7 +3,6 @@
 #include <alloca.h>
 #include "list.h"
 #include "term.h"
-#include "file.h"
 #include "ced.h"
 
 void ced::add_char(int c) {

@@ -2,7 +2,6 @@
 #include <string.h>
 #include "list.h"
 #include "term.h"
-#include "file.h"
 #include "ced.h"
 
 void ced::change() {

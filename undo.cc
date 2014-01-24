@@ -4,7 +4,6 @@
 #include "vec.h"
 #include "list.h"
 #include "term.h"
-#include "file.h"
 #include "ced.h"
 
 void undo::trace() {

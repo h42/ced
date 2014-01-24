@@ -31,11 +31,16 @@ char * jlib_readlink(char *fn,char *fn2,int size) {
 // CHECKSAVE
 //
 void ced::checksave() {
-    char sx[80];
+    char sx[80], fn[256]="";
     if (!zedit) return;
     while (1) {
         dsp.request("Do you want to save current file (y/n)?", sx, sizeof(sx),1);
         if (sx[0]=='y' || sx[0]=='Y') {
+
+            dsp.request("Enter filename: ",fn,sizeof(fn));
+            if (!fn[0]) continue;
+            strncpy(zfn,fn,sizeof(zfn)-1); zfn[sizeof(zfn)-1]=0;
+
             savefile();
             return;
         }
@@ -53,6 +58,8 @@ int ced::newfile() {
     ll.reset();
     ll.ins(0,"",0);
     zx=zy=ztop=zoff=zedit=zedit2=0;
+    zfn[0]=0;
+    disppage(ztop);
     ll.log_on();
     zu.reset();
     return 0;
@@ -104,10 +111,11 @@ int ced::savefile() {
 	jcpy(zmsg,"File not changed");
 	return 0;
     }
+    if (!zfn[0]) checksave();
     char *buf;
     int fd = open(zfn, O_WRONLY | O_CREAT | O_TRUNC, 0640);
     if (fd<0) {
-	snprintf(zmsg,sizeof(zmsg),"Unable to open file - %s",strerror(errno));
+        snprintf(zmsg,sizeof(zmsg),"Unable to open file %d - %s",fd,strerror(errno));
 	return 0;
     }
     int l;
