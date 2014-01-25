@@ -99,7 +99,6 @@ public:
     void make();
     int  max(int x,int y) {return x>y ? x : y;}
     int  min(int x,int y) {return x<y ? x : y;}
-    void newf();
     void pgup();
     void pgdown();
     void pline(int rollback=0);
@@ -293,13 +292,6 @@ void ced::pline(int rollback) {
     zbuf[zbufl]=0;
     ll.ins(zcur,zbuf,zbufl+1);
     zedit2=0;
-}
-
-void ced::newf() {
-    ll.reset();
-    ll.ins("");
-    zx=zy=zoff=ztop=0;
-    disppage(0);
 }
 
 void ced::main(int argc, char **argv) {

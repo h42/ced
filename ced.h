@@ -86,7 +86,6 @@ public:
     void make();
     int  max(int x,int y) {return x>y ? x : y;}
     int  min(int x,int y) {return x<y ? x : y;}
-    void newf();
     void pgup();
     void pgdown();
     void pline(int rollback=0);

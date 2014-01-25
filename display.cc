@@ -27,6 +27,7 @@ void ced::displine(char *sx, int y, int len) {
     if (zoff>=len) return;
     sx=&sx[zoff];
     len-=zoff;
+    len = (len<=zmaxx) ? len : zmaxx;
     for (int i=0; i<len; i++) {
         if (in_k(zoff+i, y)) {
             if (!hi) {
