@@ -30,30 +30,26 @@ char * jlib_readlink(char *fn,char *fn2,int size) {
 //
 // CHECKSAVE
 //
-void ced::checksave() {
-    char sx[80], fn[256]="";
-    if (!zedit) return;
+int ced::checksave() {
+    char sx[80];
+    if (!zedit) return 0;
+    dsp.request("Do you want to save current file (y/n)?", sx, sizeof(sx),1);
     while (1) {
-        dsp.request("Do you want to save current file (y/n)?", sx, sizeof(sx),1);
-        if (sx[0]=='y' || sx[0]=='Y') {
-
-            dsp.request("Enter filename: ",fn,sizeof(fn));
-            if (!fn[0]) continue;
-            strncpy(zfn,fn,sizeof(zfn)-1); zfn[sizeof(zfn)-1]=0;
-
-            savefile();
-            return;
-        }
-        else if (sx[0]=='n' || sx[0]=='N') return;
+        if (sx[0]=='y' || sx[0]=='Y') return savefile();
+        else if (sx[0]=='n' || sx[0]=='N') return 0;
+        dsp.request("Do you want to save current file (y/n)?",
+             sx, sizeof(sx),1);
     }
+    return 0;
 }
 
 //
 // NEWFILE
 //
 int ced::newfile() {
+    int rc = checksave();
+    if (rc<0) return -1;
     ll.log_off();
-    checksave();
     if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
     ll.reset();
     ll.ins(0,"",0);
@@ -111,12 +107,20 @@ int ced::savefile() {
 	jcpy(zmsg,"File not changed");
 	return 0;
     }
-    if (!zfn[0]) checksave();
+    if (!zfn[0]) {
+        char fn[256];
+        dsp.request("Enter filename: ",fn,sizeof(fn));
+        if (!fn[0]) {
+            snprintf(zmsg,sizeof(zmsg),"File not save - no name");
+            return -1;
+        }
+        strncpy(zfn,fn,sizeof(zfn)-1); zfn[sizeof(zfn)-1]=0;
+    }
     char *buf;
     int fd = open(zfn, O_WRONLY | O_CREAT | O_TRUNC, 0640);
     if (fd<0) {
         snprintf(zmsg,sizeof(zmsg),"Unable to open file %d - %s",fd,strerror(errno));
-	return 0;
+        return -1;
     }
     int l;
     for (int ii=0; ii<ll.size(); ii++) {
@@ -131,7 +135,12 @@ int ced::savefile() {
 	}
 	memcpy(zfbuf,buf,l);
 	zfbuf[l]=10;
-	write(fd, zfbuf, l+1);
+        int rc=write(fd, zfbuf, l+1);
+        if (rc != l+1) {
+            snprintf(zmsg,sizeof(zmsg),"write failed - rc= %d - %s",
+                rc,strerror(errno));
+            return -1;
+        }
     }
     close(fd);
     jcpy(zmsg,"File saved");
@@ -147,7 +156,7 @@ int ced::loadfile(const char *fn) {
     char fn2[256];
     pline();
     if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
-    checksave();
+    if ((rc=checksave())) return rc;
 
     if (!fn || !fn[0]) dsp.request("Enter filename: ",fn2,sizeof(fn2));
     else strcpy(fn2,fn);

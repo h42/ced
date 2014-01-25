@@ -126,7 +126,7 @@ public:
     void k_ins_line();
 
     // FILE
-    void checksave();
+    int  checksave();
     int  loadfile(const char *fn=0);
     int  newfile();
     int  readf(const char *fn);

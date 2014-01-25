@@ -139,7 +139,7 @@ public:
     void k_ins_line();
 
     // FILE
-    void checksave();
+    int  checksave();
     int  loadfile(const char *fn=0);
     int  newfile();
     int  readf(const char *fn);
@@ -363,7 +363,9 @@ void ced::main(int argc, char **argv) {
 	}
 
 	else if (c >= F1) {
-	    if (c == F12) break;
+            if (c == F12) {
+                if (!checksave()) break;
+            }
             else if (c==F1)   help();
             else if (c==F5)   rfind();
             else if (c==F6)   rchange();
@@ -389,7 +391,7 @@ void ced::main(int argc, char **argv) {
 
 	//else printf("%d\n",c);
     }
-    checksave();
+
     if (zfn[0]) {
         zhist.push(zfn,zx,zy,zoff,ztop);
         zhist.write();
