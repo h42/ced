@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <termios.h>
 #include <string.h>
+#include <sys/ioctl.h>
 
 //
 // CLASS TERM
@@ -97,6 +98,7 @@ public:
     void blink() {tattr(curses.blink);}
     void exit_attr() {tattr(curses.exit);}
     int  request(const char *s, char *rbuf, int len, int flag=0);
+    void resize();
     int  rows() {return curses.rows;}
     int  cols() {return curses.cols;}
 private:
@@ -280,6 +282,14 @@ int term::setmode(int x) {
     }
     zmode=0;
     return 0;
+}
+
+void term::resize() {
+    struct winsize win;
+    int rc = ioctl (1, TIOCGWINSZ, (char *) &win);
+    if (rc<0) return;
+    curses.rows=win.ws_row;
+    curses.cols=win.ws_col;
 }
 
 int term::request(const char *s, char *rbuf, int len, int flag) {

@@ -58,7 +58,6 @@ void ced::ctrl_k_indent(int dir) {
     int x = atoi(buf);
     if (x==0) return;
 
-    zu.push();
     const int IMAX=20;
     if (x>IMAX) x=IMAX;
     pline();

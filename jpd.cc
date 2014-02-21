@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <malloc.h>
 #include <string.h>
+#include <signal.h>
+#include <poll.h>
 #include "term.h"
 #include "list.h"
 #include "glob.h"
@@ -294,6 +296,44 @@ void ced::pline(int rollback) {
     zedit2=0;
 }
 
+static int waitio(int timeout) {
+    int rc;
+    struct pollfd pfd;
+    pfd.fd=0;
+    pfd.events=POLLIN;
+    pfd.revents=0;
+    rc=poll(&pfd,1,timeout);
+    if (rc>0) {
+        if (pfd.revents&POLLIN) rc=0;
+        else rc=-1;
+    }
+    else rc=-1;
+    return rc;
+}
+
+static int zresize=0;
+static void gotsigwinch(int x) {
+    if (x==SIGWINCH) zresize=1;
+}
+
+static int getkb(ced *ced) {
+    int c;
+    while (1) {
+        if (waitio(5000)==0) {
+             while (!(c=ced->dsp.get()));
+             break;
+        }
+        if (zresize) {
+            zresize=0;
+            ced->dsp.resize();
+            ced->zmaxy=ced->dsp.rows();
+            ced->zmaxx=ced->dsp.cols();
+            ced->disppage(ced->ztop);
+        }
+    }
+    return c;
+}
+
 void ced::main(int argc, char **argv) {
 
     int c=0;
@@ -329,10 +369,12 @@ void ced::main(int argc, char **argv) {
 	dsp.cup(zy+1-ztop,zx+1-zoff);
 	fflush(stdout);
         //zlog.put("----------------");
-	c=dsp.get();
+
+        c=getkb(this);
+
 	if (c<=26) {
 	    if (c==1) ctrl_a();
-	    else if (c==2) bottom();
+            else if (c==2) {zu.push();bottom();}
 	    else if (c==4) del_line();
 	    else if (c==5) del_eol();
             else if (c==6) scroll(1);
@@ -343,7 +385,7 @@ void ced::main(int argc, char **argv) {
 	    else if (c==13) enter();
 	    else if (c==14) ins_line(1);
             else if (c==18) scroll(-1);
-	    else if (c==20) top();
+            else if (c==20) {zu.push();top();}
             else if (c==21) undoer();
             else if (c==24) ctrl_x();
 	}
@@ -422,6 +464,7 @@ void t1() {
 int main(int argc, char **argv) {
     ced e1;
 
+    signal(SIGWINCH,gotsigwinch);
     //t1();
 
     e1.main(argc,argv);

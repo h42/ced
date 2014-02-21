@@ -15,6 +15,7 @@ void undo::trace() {
 }
 
 void undo::push(int type) {
+    zt->dsp.clrscr();
     zt->ll.set_log_ptr(zp1);
     zunder[zp1].put(*zt, type);
     zp1++;
@@ -23,6 +24,7 @@ void undo::push(int type) {
 }
 
 void undo::pop() {
+    //zt->dsp.clrscr();
     if (zcnt<=0) return;
     zp1--;
     if (zp1<0) zp1=MAXUNDO - 1;
@@ -77,4 +79,3 @@ void under::get(ced &t) {
     if (zbuf) memcpy(t.zbuf,zbuf,zbufsize);
     t.zbufl=zbufl;
 }
-
