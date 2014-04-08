@@ -344,6 +344,7 @@ void ced::main(int argc, char **argv) {
 
     newfile();
     zhist.read();
+    dsp.resize();
     zmaxx=dsp.cols();
     zmaxy=dsp.rows();
 
