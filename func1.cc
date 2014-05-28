@@ -19,11 +19,11 @@ void ced::add_char(int c) {
 
 void ced::bottom() {
     pline();
-    zy=ll.size()-zmaxy+2;
+    zy=zl.size()-zmaxy+2;
     zy = (zy>=0) ? zy : 0;
     disppage(zy);
     zx=0;
-    zy=ll.size()-1;
+    zy=zl.size()-1;
     gline();
 }
 
@@ -36,14 +36,14 @@ void ced::bs_char() {
     }
     if (zx>0) {
 	zx--;
-        del_char(0);
+        del_char();
 	return;
     }
     if (zy<=0) return;
     pline();
-    up(0);
-    end(0);
-    del_char(0);
+    up();
+    end();
+    del_char();
 }
 
 void ced::btab() {
@@ -72,7 +72,7 @@ void ced::ctrl_a() {
     upoff();
 }
 
-void ced::del_char(int pushit) {
+void ced::del_char() {
     gline(1);
     k_del_char();
     if (zx<zbufl) {
@@ -82,12 +82,12 @@ void ced::del_char(int pushit) {
 	displine(zbuf,zy,zbufl);
 	return;
     }
-    if (zx>=zbufl && zy>= ll.size()-1) return;
+    if (zx>=zbufl && zy>= zl.size()-1) return;
     gline2(zy+1);
     if (zx>zbufl) memset(&zbuf[zbufl],' ',zx-zbufl);
     memcpy(&zbuf[zx],zbuf2,zbufl2);
     zbufl=zx+zbufl2;
-    ll.del(zy+1);
+    zl.del(zy+1);
     disppage(ztop);
 }
 
@@ -100,7 +100,7 @@ void ced::del_eol() {
 }
 
 void ced::del_line() {
-    if (ll.size()==1) {
+    if (zl.size()==1) {
         init_k();
 	zy=0;
 	zedit=zedit2=1;
@@ -113,8 +113,8 @@ void ced::del_line() {
     pline();
     k_del_line();
     zedit=1; zcur=-1;
-    ll.del(zy);
-    if (zy>=ll.size()) {
+    zl.del(zy);
+    if (zy>=zl.size()) {
 	zy--;
 	if (zy<ztop) ztop=zy;
     }
@@ -123,13 +123,13 @@ void ced::del_line() {
 
 void ced::down() {
     pline(); zcur=-1;
-    if (zy>=ll.size()-1) return;
+    if (zy>=zl.size()-1) return;
     zy++;
     if (zy-ztop < zmaxy-2) return;
     disppage(ztop+1);
 }
 
-void ced::end(int pushit) {
+void ced::end() {
     gline();
     zx=zbufl;
     upoff();
@@ -139,7 +139,7 @@ void ced::enter() {
     pline();
     if (!zins) {
 	home();
-	if (zy<ll.size()-1) zy++;
+        if (zy<zl.size()-1) zy++;
 	if (zy+ztop>=zmaxy-2) disppage(++ztop);
 	zcur=-1;
 	return;
@@ -174,7 +174,7 @@ void ced::go() {
     char buf[20];
     request("Enter line number: ", buf, sizeof(buf)-1);
     int i = atoi(buf) - 1;
-    if (i<0 || i>=ll.size()) return;
+    if (i<0 || i>=zl.size()) return;
     pline();
     zy=i;
     if (zy<ztop || zy>ztop+zmaxy-3) disppage(ztop=zy);
@@ -242,8 +242,8 @@ void ced::ins_line(int disp) {
     pline(); zcur=-1;
     zedit=1;
     zy++;
-    if (zy>ll.size()) zy=ll.size();
-    ll.ins(zy,"",0);
+    if (zy>zl.size()) zy=zl.size();
+    zl.ins(zy,"",0);
     if (zy-ztop >= zmaxy-2) ztop++;
     if (disp) disppage(ztop);
 }
@@ -269,12 +269,12 @@ void ced::pgup() {
 void ced::pgdown() {
     int y=zy-ztop;
     pline(); zcur=-1;
-    if (ztop>=ll.size()-2) return;
+    if (ztop>=zl.size()-2) return;
     ztop+=zmaxy-2;
-    if (ztop>=ll.size()-2) ztop=ll.size()-2;
+    if (ztop>=zl.size()-2) ztop=zl.size()-2;
     if (ztop<0) ztop=0;
     zy=ztop+y;
-    if (zy>=ll.size()) zy=ll.size()-1;
+    if (zy>=zl.size()) zy=zl.size()-1;
     disppage(ztop);
 }
 
@@ -284,9 +284,10 @@ void ced::right() {
 }
 
 void ced::scroll(int x) {
+    pline();
     ztop += x;
     if (ztop<0) ztop=0;
-    if (ztop>ll.size()-1) ztop=ll.size()-1;
+    if (ztop>zl.size()-1) ztop=zl.size()-1;
     if (zy<ztop) zy=ztop;
     else if (zy>ztop+zmaxy-2) zy = ztop+zmaxy-2;
     disppage(ztop);
@@ -309,7 +310,7 @@ void ced::undoer() {
     disppage(ztop);
 }
 
-void ced::up(int pushit) {
+void ced::up() {
     pline(); zcur=-1;
     if (zy>0) zy--;
     if (zy-ztop<0) disppage(zy);

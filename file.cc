@@ -49,14 +49,14 @@ int ced::checksave() {
 int ced::newfile() {
     int rc = checksave();
     if (rc<0) return -1;
-    ll.log_off();
+    zl.log_off();
     if (zfn[0]) zhist.push(zfn,zx,zy,zoff,ztop);
-    ll.reset();
-    ll.ins(0,"",0);
+    zl.reset();
+    zl.ins(0,"",0);
     zx=zy=ztop=zoff=zedit=zedit2=0;
     zfn[0]=0;
     disppage(ztop);
-    ll.log_on();
+    zl.log_on();
     zu.reset();
     return 0;
 }
@@ -123,14 +123,14 @@ int ced::savefile() {
         return -1;
     }
     int l;
-    for (int ii=0; ii<ll.size(); ii++) {
-        buf=ll.get(ii);
+    for (int ii=0; ii<zl.size(); ii++) {
+        buf=zl.get(ii);
 	l=strlen(buf);
 	if (l+1 >= zfbufsize) {
 	    zfbufsize *= 2;
 	    zfbuf = (char *)realloc(zfbuf,zfbufsize);
 	    if (l+1 >= zfbufsize) {
-                ll.reset(); // THROW AND ERROR
+                zl.reset(); // THROW AND ERROR
 	    }
 	}
 	memcpy(zfbuf,buf,l);
@@ -169,9 +169,9 @@ int ced::loadfile(const char *fn) {
     }
 
     zu.reset();
-    ll.log_off();
+    zl.log_off();
     rc=readf(fn2);
-    ll.log_on();
+    zl.log_on();
 
     if (rc) strcpy(zmsg,"Open failed");
     else {
@@ -186,7 +186,7 @@ int ced::loadfile(const char *fn) {
             zedit=zedit2=0;
         }
         else  zx=zy=ztop=zoff=zedit=zedit2=0;
-        if (zy<0 || zy>ll.size()-1 || ztop<0 || ztop>ll.size()-1) ztop=zy=0;
+        if (zy<0 || zy>zl.size()-1 || ztop<0 || ztop>zl.size()-1) ztop=zy=0;
 	disppage(ztop);
 	sprintf(zmsg,"%s loaded",fn2);
     }
@@ -205,7 +205,7 @@ int ced::readf(const char *fn) {
 
     //sigstuf(1);
 
-    ll.reset();
+    zl.reset();
     p2=0;
     p=0;
     while ((rc=fread(buf2,1,sizeof(buf2),f1)) > 0) {
@@ -214,7 +214,7 @@ int ced::readf(const char *fn) {
 	    if (!zoverride && c==13) continue;
 	    if (c==10) {
 		zfbuf[p2]=0;
-		ll.ins(zfbuf);
+                zl.ins(zfbuf);
 		p2=0;
 	    }
 	    else {
@@ -233,7 +233,7 @@ int ced::readf(const char *fn) {
 		    zfbufsize *= 2;
 		    zfbuf = (char *)realloc(zfbuf,zfbufsize);
 		    if (p2 >= zfbufsize) {
-                        ll.reset(); // THROW AN ERROR
+                        zl.reset(); // THROW AN ERROR
 		    }
 		}
 	    }
@@ -242,7 +242,7 @@ int ced::readf(const char *fn) {
     if (p2>0) {
 	zfbuf[p2]=0;
 	p++;
-	ll.ins(zfbuf);
+        zl.ins(zfbuf);
     }
     //zmsg[0]=0;
     fclose(f1);

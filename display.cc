@@ -50,7 +50,7 @@ void ced::disppage(int top) {
     int i;
     pline();
     ztop=top;
-    for (i=0; i<zmaxy-2 && i+top<ll.size(); i++) {
+    for (i=0; i<zmaxy-2 && i+top<zl.size(); i++) {
 	gline2(i+top);
 	zbuf2[zbufl2]=0;
 	displine(zbuf2, i+top, zbufl2);

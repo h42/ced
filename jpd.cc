@@ -20,50 +20,12 @@ using namespace std;
 
 typedef unsigned char uchar;
 
-
+#include "undo.h"
 #include "history.h"
 #include "re.h"
 #include "log.h"
 
 class ced;
-
-class under {
-public:
-    under() {zused=0; zbuf=(char *)0; zbufl=0;}
-    ~under() {}
-    void get(ced&);
-    void put(ced&,int type);
-    void del(ced&, int d1, int d2);
-//private:
-    int     zused;
-    char   *zbuf;
-    int     zbufl;
-    int     zbufsize;
-    int     zcur;
-    int     zdel1,zdlen;
-    int     zedit,zedit2;
-    int     zindent;
-    int     zins;
-    int     zx,zy,ztop,zoff;
-    int     zkx1,zkx2,zky1,zky2,zkh;
-};
-
-class undo {
-public:
-    void init(ced *t) {zt=t; zp1=0; zcnt=0;}
-    ~undo() {};
-    void trace();
-    void push(int type=0);
-    void pop();
-    void del(int d1, int dlen=1);
-    void reset() {zp1=zcnt=0;}
-private:
-    ced *zt;
-    under zunder[MAXUNDO];
-    int zp1,zcnt;
-};
-
-
 
 class ced {
     friend class undo;
@@ -77,7 +39,7 @@ public:
     void bottom();
     void change();
     void ctrl_a();
-    void del_char(int pushit=1);
+    void del_char();
     void del_eol();
     void del_line();
     void dispchar(int c, int y=-1, int x=-1);
@@ -85,7 +47,7 @@ public:
     void disppage(int top);
     void dispstat();
     void down();
-    void end(int pushit=1);
+    void end();
     void enter();
     void find(int sensitive=0);
     void gline(int up=0);
@@ -113,7 +75,7 @@ public:
     void tab();
     void top();
     void undoer();
-    void up(int pushit=1);
+    void up();
     void upoff();
 
     void ctrl_x();
@@ -150,7 +112,7 @@ public:
 //private:
     undo    zu;
     term    dsp;
-    list    ll;
+    list    zl;
     //file    zfile;
     char   *zbuf;
     char   *zbuf2;
@@ -185,7 +147,6 @@ public:
 #endif
 //ccinclude
 
-//ced::ced() : zu(this) {
 ced::ced() {
     zbufsize=zfbufsize=4064;
     zbuf=(char *)malloc(zbufsize);
@@ -220,7 +181,7 @@ void ced::gline(int up) {
     if (up) zedit=zedit2=1;
     if (zy==zcur) return; // ALL FUNCTIONS MUST SET ZY!=ZCUR IF ZBUF NOT VALID
     zcur=zy;
-    llbuf=ll.get(zy);
+    llbuf=zl.get(zy);
     for (i=zbufl=0;i<zbufsize && zbufl<zbufsize;i++) {
 	if (!(c=llbuf[i])) break;
 	if (c == 9) {
@@ -235,7 +196,7 @@ void ced::gline(int up) {
 void ced::gline2(int x) {
     int i;
     //zlog.put("gline2 x=%d", x);
-    char c,*cur=ll.get(x);
+    char c,*cur=zl.get(x);
     for (i=zbufl2=0;i<zbufsize && zbufl2<zbufsize;i++) {
 	if (!(c=cur[i])) break;
 	if (c == 9) {
@@ -290,9 +251,9 @@ void ced::pline(int rollback) {
         zbufl=j;
     }
 
-    ll.del(zcur);
+    zl.del(zcur);
     zbuf[zbufl]=0;
-    ll.ins(zcur,zbuf,zbufl+1);
+    zl.ins(zcur,zbuf,zbufl+1);
     zedit2=0;
 }
 
@@ -375,7 +336,7 @@ void ced::main(int argc, char **argv) {
 
 	if (c<=26) {
 	    if (c==1) ctrl_a();
-            else if (c==2) {zu.push();bottom();}
+            else if (c==2) {bottom();}
 	    else if (c==4) del_line();
 	    else if (c==5) del_eol();
             else if (c==6) scroll(1);
@@ -386,7 +347,7 @@ void ced::main(int argc, char **argv) {
 	    else if (c==13) enter();
 	    else if (c==14) ins_line(1);
             else if (c==18) scroll(-1);
-            else if (c==20) {zu.push();top();}
+            else if (c==20) {top();}
             else if (c==21) undoer();
             else if (c==24) ctrl_x();
 	}
@@ -466,7 +427,6 @@ int main(int argc, char **argv) {
     ced e1;
 
     signal(SIGWINCH,gotsigwinch);
-    //t1();
 
     e1.main(argc,argv);
     return 0;

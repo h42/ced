@@ -122,12 +122,12 @@ void ced::ctrl_kc() {
     l=zky2-zky1+1;
     ll2.reset();
     for (i=zky1;i<=zky2;i++) {
-        buf=ll.get(i);
+        buf=zl.get(i);
         ll2.ins(buf);
     }
     for (i=0;i<l;i++) {
         buf=ll2.get(i);
-        ll.ins(i+zy+1,buf);
+        zl.ins(i+zy+1,buf);
     }
     zky1=zy+1;zky2=zky1+l-1;
     disppage(ztop);
@@ -157,7 +157,7 @@ void ced::ctrl_kd() {
         return;
     }
     int l=zky2-zky1+1;
-    for (int i=0;i<l;i++) ll.del(zky1);
+    for (int i=0;i<l;i++) zl.del(zky1);
     zkh=0;
     if (zy>zky1 && zy<=zky2) zy=zky1;
     if (zy>zky2) zy-=l;
@@ -191,7 +191,7 @@ void ced::ctrl_kp() {
     pline();
     for (int i=0;i<l;i++) {
         buf=zcopyll.get(i);
-        ll.ins(i+zy+1,buf);
+        zl.ins(i+zy+1,buf);
     }
     zky1=zy+1;
     zky2=zky1+l-1;
@@ -210,7 +210,7 @@ void ced::ctrl_ks() {
     char *buf;
     zcopyll.reset();
     for (int i=zky1;i<=zky2;i++) {
-        buf=ll.get(i);
+        buf=zl.get(i);
         zcopyll.ins(buf);
     }
     snprintf(zmsg,sizeof(zmsg),"block saved");
@@ -260,19 +260,19 @@ void ced::ctrl_kv() {
     l=zky2-zky1+1;
     ll2.reset();
     for (i=zky1;i<=zky2;i++) {
-        buf=ll.get(i);
+        buf=zl.get(i);
         ll2.ins(buf);
     }
     for (i=0;i<l;i++) {
         buf=ll2.get(i);
-        ll.ins(i+zy+1,buf);
+        zl.ins(i+zy+1,buf);
     }
     if (zy<zky1) {
-        for (i=0;i<l;i++) ll.del(zky1 + l);
+        for (i=0;i<l;i++) zl.del(zky1 + l);
         zky1=zy+1; zky2=zky1+l-1;
     }
     else {
-        for (i=0;i<l;i++) ll.del(zky1);
+        for (i=0;i<l;i++) zl.del(zky1);
         zky1=zy+1-l; zky2=zky1+l-1;
     }
     disppage(ztop);

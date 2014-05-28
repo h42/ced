@@ -6,6 +6,53 @@
 #include "term.h"
 #include "ced.h"
 
+//ccinclude
+#ifndef _UNDO_H
+#define _UNDO_H
+
+#define MAXUNDO 50
+
+class ced;
+
+class under {
+public:
+    under() {zused=0; zbuf=(char *)0; zbufl=0;}
+    ~under() {}
+    void get(ced&);
+    void put(ced&,int type);
+    void del(ced&, int d1, int d2);
+//private:
+    int     zused;
+    char   *zbuf;
+    int     zbufl;
+    int     zbufsize;
+    int     zcur;
+    int     zdel1,zdlen;
+    int     zedit,zedit2;
+    int     zindent;
+    int     zins;
+    int     zx,zy,ztop,zoff;
+    int     zkx1,zkx2,zky1,zky2,zkh;
+};
+
+class undo {
+public:
+    void init(ced *t) {zt=t; zp1=0; zcnt=0;}
+    ~undo() {};
+    void trace();
+    void push(int type=0);
+    void pop();
+    void del(int d1, int dlen=1);
+    void reset() {zp1=zcnt=0;}
+private:
+    ced *zt;
+    under zunder[MAXUNDO];
+    int zp1,zcnt;
+};
+
+#endif
+//ccinclude
+
 void undo::trace() {
     zt->dsp.clrscr();
     for (int i=0;i<zcnt;i++) {
@@ -16,7 +63,7 @@ void undo::trace() {
 
 void undo::push(int type) {
     zt->dsp.clrscr();
-    zt->ll.set_log_ptr(zp1);
+    zt->zl.set_log_ptr(zp1);
     zunder[zp1].put(*zt, type);
     zp1++;
     if (zcnt<MAXUNDO) zcnt++;
@@ -28,7 +75,7 @@ void undo::pop() {
     if (zcnt<=0) return;
     zp1--;
     if (zp1<0) zp1=MAXUNDO - 1;
-    zt->ll.rollback(zp1);
+    zt->zl.rollback(zp1);
     zunder[zp1].get(*zt);
     zcnt--;
 }

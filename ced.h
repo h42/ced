@@ -5,50 +5,12 @@
 
 typedef unsigned char uchar;
 
-
+#include "undo.h"
 #include "history.h"
 #include "re.h"
 #include "log.h"
 
 class ced;
-
-class under {
-public:
-    under() {zused=0; zbuf=(char *)0; zbufl=0;}
-    ~under() {}
-    void get(ced&);
-    void put(ced&,int type);
-    void del(ced&, int d1, int d2);
-//private:
-    int     zused;
-    char   *zbuf;
-    int     zbufl;
-    int     zbufsize;
-    int     zcur;
-    int     zdel1,zdlen;
-    int     zedit,zedit2;
-    int     zindent;
-    int     zins;
-    int     zx,zy,ztop,zoff;
-    int     zkx1,zkx2,zky1,zky2,zkh;
-};
-
-class undo {
-public:
-    void init(ced *t) {zt=t; zp1=0; zcnt=0;}
-    ~undo() {};
-    void trace();
-    void push(int type=0);
-    void pop();
-    void del(int d1, int dlen=1);
-    void reset() {zp1=zcnt=0;}
-private:
-    ced *zt;
-    under zunder[MAXUNDO];
-    int zp1,zcnt;
-};
-
-
 
 class ced {
     friend class undo;
@@ -62,7 +24,7 @@ public:
     void bottom();
     void change();
     void ctrl_a();
-    void del_char(int pushit=1);
+    void del_char();
     void del_eol();
     void del_line();
     void dispchar(int c, int y=-1, int x=-1);
@@ -70,7 +32,7 @@ public:
     void disppage(int top);
     void dispstat();
     void down();
-    void end(int pushit=1);
+    void end();
     void enter();
     void find(int sensitive=0);
     void gline(int up=0);
@@ -98,7 +60,7 @@ public:
     void tab();
     void top();
     void undoer();
-    void up(int pushit=1);
+    void up();
     void upoff();
 
     void ctrl_x();
@@ -135,7 +97,7 @@ public:
 //private:
     undo    zu;
     term    dsp;
-    list    ll;
+    list    zl;
     //file    zfile;
     char   *zbuf;
     char   *zbuf2;

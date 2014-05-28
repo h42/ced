@@ -75,7 +75,7 @@ void ced::rfind() {
     }
     int i,j,rc;
     pline();
-    for (i=0; zy+i < ll.size(); i++) {
+    for (i=0; zy+i < zl.size(); i++) {
         gline2(zy+i);
         j = i==0 ? zx+1 : 0;
         rc = zre.wild((unsigned char *)&zbuf2[j], zbufl2-j);
